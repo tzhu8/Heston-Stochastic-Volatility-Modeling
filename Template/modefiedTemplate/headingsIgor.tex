@@ -1,0 +1,183 @@
+%%% standard pachages
+\usepackage{ amsmath, amssymb, amsfonts, graphicx, epsfig, mathtools, epstopdf}
+%%%
+\usepackage[section]{placeins}
+\usepackage{morefloats}
+\usepackage{float}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% pachage to write Indicator function as 'blackboard bold 1': \mathbbm{1}. Made a custom macro \1=\mathbbm{1}
+\usepackage{bbm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This package gives the enumerate environment an optional argument
+% which determines the style in which the counter is printed.
+% http://www.ctex.org/documents/packages/table/enumerate.pdf
+\usepackage{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% to use strike out \sout
+\usepackage[normalem]{ulem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To display the labels used in a tex file in the dvi file (for example, if a theorem is labelled with the \label command) use the package
+%\usepackage{showkeys}
+%This will display all labels (for example, in the case of a labelled theorem, the label of the theorem will occur in the margin of the dvi file.
+%The command above by itself not only displays labels when they are first named but also when they are cited (or referenced). To disable this feature use the following %options with the showkeys package
+%\usepackage[notref, notcite]{showkeys}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% It extends the functionality of all the LATEX cross-referencing commands (including the table of contents, bibliographies etc) to produce \special commands which a driver can turn into hypertext links; it also provides new commands to allow the user to write ad hoc hypertext links, including those to external documents and URLs.
+% http://www.tug.org/applications/hyperref/manual.html
+\usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=blue,
+            citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage[usenames]{color}
+\definecolor{Red}{rgb}{0.7,0,0.1}
+\definecolor{Green}{rgb}{0,0.7,0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% It is a LaTeX package to act as generalized
+% interface for standard and non-standard bibliographic style files (BibTeX).
+% http://www.ctan.org/tex-archive/macros/latex/contrib/natbib/
+%\usepackage[numbers]{natbib}
+%\usepackage{natbib}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% a good looking way to format urls
+% http://mirror.its.uidaho.edu/pub/tex-archive/help/Catalogue/entries/url.html
+\usepackage{url}
+% Define a new 'leo' style for the package that will use a smaller font.
+\makeatletter\def\url@leostyle{%
+ \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\scriptsize\ttfamily}}} \makeatother\urlstyle{leo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% to add accents and comments
+%\usepackage{ comment}
+
+
+%% custom margins
+%\def\baselinestretch{1.1}
+\setlength{\voffset}{-0.5in}
+\setlength{\hoffset}{-0.5in}
+\setlength{\textheight}{8.5in}
+\setlength{\textwidth}{6in}
+%% or use geometry pacakge
+%\usepackage[margin=1.1in, dvips, letterpaper]{geometry}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{corollary}[theorem]{Corollary}
+
+%\theoremstyle{definition}
+%\newtheorem{definition}[theorem]{Definition}
+%\newtheorem{definition}{Definition}[section]
+%\newtheorem{example}[theorem]{Example}
+%\newtheorem{example}{Example}[section]
+%\theoremstyle{remark}
+%\newtheorem{remark}[theorem]{Remark}
+
+%\newtheoremstyle{dotless}{}{}{\itshape}{}{\bfseries}{}{ }{}
+%\theoremstyle{dotless}
+%\newtheorem{assumption}{Assumption}
+%\renewcommand*{\theassumption}{(\Alph{assumption})}
+%\numberwithin{equation}{section}
+%\numberwithin{theorem}{section}
+%\renewcommand{\labelitemi}{ {\small $\rhd$}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% used for editing and making comments in color
+% Example \ig{Remarks and Commets}
+\newcommand{\ti}[1]{\textcolor[rgb]{0.00, 0.0, 0.98}{T\&I: #1} }
+\newcommand{\ig}[1]{\textcolor[rgb]{1.00, 0.0, 0.98}{Ig: #1} }
+\newcommand{\ii}[1]{\textcolor[rgb]{0.00, 0.60, 0.5}{II: #1} }
+\newcommand{\rr}[1]{\textcolor[rgb]{0.00, 0.65, 0}{RR: #1} }
+\newcommand{\trb}[1]{\textcolor[rgb]{1.00, 0.00, 0}{TRB: #1} }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     Igor's macros
+%% \mathcal Letters
+\def\cA{\mathcal{A}}
+\def\cB{\mathcal{B}}
+\def\cC{\mathcal{C}}
+\def\cD{\mathcal{D}}
+\def\cE{\mathcal{E}}
+\def\cF{\mathcal{F}}
+\def\cG{\mathcal{G}}
+\def\cH{\mathcal{H}}
+\def\cI{\mathcal{I}}
+\def\cJ{\mathcal{J}}
+\def\cK{\mathcal{K}}
+\def\cL{\mathcal{L}}
+\def\cM{\mathcal{M}}
+\def\cN{\mathcal{N}}
+\def\cO{\mathcal{O}}
+\def\cP{\mathcal{P}}
+\def\cQ{\mathcal{Q}}
+\def\cR{\mathcal{R}}
+\def\cS{\mathcal{S}}
+\def\cT{\mathcal{T}}
+\def\cU{\mathcal{U}}
+\def\cV{\mathcal{V}}
+\def\cW{\mathcal{W}}
+\def\cX{\mathcal{X}}
+\def\cY{\mathcal{Y}}
+\def\cZ{\mathcal{Z}}
+
+%% \mathbb Letters
+\def\bA{\mathbb{A}}
+\def\bB{\mathbb{B}}
+\def\bC{\mathbb{C}}
+\def\bD{\mathbb{D}}
+\def\bE{\mathbb{E}}
+\def\bF{\mathbb{F}}
+\def\bG{\mathbb{G}}
+\def\bH{\mathbb{H}}
+\def\bI{\mathbb{I}}
+\def\bJ{\mathbb{J}}
+\def\bK{\mathbb{K}}
+\def\bL{\mathbb{L}}
+\def\bM{\mathbb{M}}
+\def\bN{\mathbb{N}}
+\def\bO{\mathbb{O}}
+\def\bP{\mathbb{P}}
+\def\bQ{\mathbb{Q}}
+\def\bR{\mathbb{R}}
+\def\bS{\mathbb{S}}
+\def\bT{\mathbb{T}}
+\def\bU{\mathbb{U}}
+\def\bV{\mathbb{V}}
+\def\bW{\mathbb{W}}
+\def\bX{\mathbb{X}}
+\def\bY{\mathbb{Y}}
+\def\bZ{\mathbb{Z}}
+
+\def\I{\mathbb{I}}
+\def\1{\mathbbm{1}}
+
+
+\newcommand{\pd}[1]{\partial_{#1}}      % partial derivative
+\newcommand{\indFn}[1]{1 \! \! 1_{#1}}  % indicator function
+\newcommand{\set}[1]{\left\{#1\right\}} % set: {xyz}
+\renewcommand{\mid}{\;|\;}              % mid bar with small spaces before and after: x | y
+\newcommand{\Mid}{\;\Big | \;}          % big bar with small spaces before and after:
+
+\DeclareMathOperator*{\esssup}{ess\,sup} % ess sup
+\DeclareMathOperator*{\essinf}{ess\,inf} % ess inf
+\DeclareMathOperator*{\argmin}{arg\,min} % argmin
+\DeclareMathOperator*{\argmax}{arg\,max} % argmax
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%% d for derivative
+\def\d{\mathrm{d}} 

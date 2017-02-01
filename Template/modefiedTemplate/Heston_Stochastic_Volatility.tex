@@ -12,7 +12,10 @@
 
 \documentclass{ws-ijfe}
 
+\input{headingsIgor}
+
 \usepackage{graphicx}
+
 
 \begin{document}
 
@@ -28,10 +31,7 @@
 down in pencil a short title to be used as the running head.}}
 
 \author{FIRST A. AUTHOR, SECOND B. AUTHOR and THIRD
-C. AUTHOR\footnote{Typeset names in 8~pt Times Roman, uppercase
-and lightface.  Use footnotes only to indicate if permanent and
-present addresses are different. Funding information should go
-in the Acknowledgement section.}}
+C. AUTHOR\footnote{Typeset names in 8~pt Times Roman, uppercase and lightface.  Use footnotes only to indicate if permanent and present addresses are different. Funding information should go in the Acknowledgement section.}}
 
 \address{Full affiliations\footnote{Typeset
 affiliation and mailing addresses in 8pt Times italic.} \\
@@ -52,54 +52,218 @@ Typeset similarly for keywords below.
 \end{abstract}
 
 \keywords{ Enclose with each manuscript, on a separate page, from three to five keywords. }
-\end{document}
 
-\section{General Appearance}	%) A SECTION HEADING
+\section{Introduction}
 
-
-\section{Style Guidelines for IJFE}
+The Guaranteed Automatic Integration Library (GAIL) is a suite of algorithms that includes Monte Carlo methods for multidimensional integration and computation of means, which is developed by Professor Hickernell and his collaborators. GAIL has theoretical guarantees that the user-defined error tolerance will be met. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class. There are several well-known stochastic volatility models: the Hull-white model (1987), the Scott-Chesny model (1989), the Heston model (1993) and the SABR model (2002). The Heston model is of particular interest to us since it is one of the most widely used stochastic volatility models.
 
 
-Author Information: Include the following information on the first page of the manuscript: (1) title, (2) author(s), (3) institutional affiliation, (4) address, and (5) telephone number.
+We apply the Quadratic Exponential (QE) algorithm to simulate the volatility process and use the Broadie-Kaya scheme (2006) to discretize the asset price process. The QE model was developed by Andersen (2006). It is a market standard simulation method for the Heston model. Its attractiveness lies in its efficiency. It relies on simple probability density functions and needs a moderate amount of storage. Depending on the value of the volatility, the QE scheme approximates its distribution using either Gaussian or exponential distribution. After getting the value of the volatility for each time step, we discretize the asset price process. As we know, the computation of Broadie-Kaya algorithm is time consuming, but it is bias-free by construction. We discretize its scheme to get the simulation of the dynamic of asset price process. The Broadie-Kaya scheme does not satisfy an equivalent discrete-time martingale condition. The martingale property can be attained by adjusting a certain term in the scheme.
 
-Abstract: Include a one-paragraph abstract of no more than 100 words. Do not include references, footnotes, or abbreviations in the abstract.
 
-Keywords: Enclose with each manuscript, on a separate page, from three to five keywords.
+The contribution of this paper is twofold. First, the implementation of the QE scheme in GAIL so that we get the simulation algorithm of Heston model with guaranteed automatically realized user-defined error tolerance. When setting the volatility of the volatility of the asset price process as zero, the algorithm works like the algorithm of asset price process with deterministic volatility. For deterministic volatility case, we compare the results with other simulation methods such as geometric Brownian motion and quasi-Monte Carlo. It shows that the new algorithm is accurate and fast. Second, we apply variance reduction techniques such as importance sampling, control variates and Quasi-Monte Carlo methods to increase accuracy. The advantages of the new algorithm is strengthened.
 
-Typing Format: Double space with a minimum of 11pt fonts. Margins of at least 1in.
 
-Headings and Subheadings: Use no more than three levels of headings. Begin all headings at the left margin and capitalize the first letter of the first word only. Headings should be numbered as, e.g., 1, 1.3, 2.4.5, etc.
+The setup of the paper is as follows: we first introduce Heston model, QE scheme and the brief idea behind GAIL. Then, we explain our new algorithm and the improved algorithm using variance reduction techniques. At last, we show its performance in comparison with various widespread used schemes and with different variance reduction applications
 
-Footnotes: Each footnote should appear at the bottom of the page on which it is cited in the text and should be indicated consecutively with superscript Arabic numerals.
+\section{Options Modeled by the Heston Stochastic Volatility Model}
+\subsection{Heston Model}
+Heston model is defined as
+ \begin{align}
+    \d X & =\mu X\,\d t+\sqrt{V}X\,\d W_1\label{eq1}\\
+    \d V &= -\kappa (\theta-V)\,\d t +\nu\sqrt{V}\,\d W_2\label{eq2}
+  \end{align}
+\begin{align*}
+\text{where }&\\
+   & \d W_1 \text{ and } \d W_2 \text{ are two standard Brownian motions which are correlated}\\
+   &\rho \text{ is the correlation,} \\
+   & \mu \text{ is the the risk-free interest rate,}\\%r \text{ and } d \text{ are respectively the continuously compounded risk-free interest rate and dividend yield,}  \\
+   & \kappa \text{ is the speed of mean reversion,} \\
+   & \theta \text{ is the value of the long-term variance,} \\
+   & \nu \text{ is the volatility of volatility.}
+\end{align*}
 
-Equations: Number consecutively only those equations that are referenced in the text. Indent equations and place numbers in parentheses at the right margin.
+Applying the Ito's formula to \eqref{eq1}, an equivalent form to simulate the process of asset price is shown in Eq.(\ref{logX}).
+\begin{equation}\label{logX}
+  \d\ln(X)=(\mu-\frac{V}{2})\,\d t+\sqrt{V}\,\d W_1
+\end{equation}
 
-References: List references alphabetically by author's last name at the end of the text of the paper. They can be cited in the text as, e.g., "According to Smith and Jones (1995), ..." or "... (Smith and Jones, 1995)".
+\subsection{Quadratic Exponential Scheme}
+We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process. 
+\begin{enumerate}
+\item Given $\hat{V}(t)$, compute $m$ and $s^2$ from following equations
+\begin{align*}
+  m &=\theta + (\hat{V}(t)-\theta)e^{-\kappa\Delta} \\
+  s^2 &=\frac{\hat{V}(t)\nu^2 e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta\nu^2}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2
+\end{align*}
+\item Compute $\psi=s^2/m^2$\\
+\item Draw a uniform random number $U_V$
+\item If $\psi\leq\psi_c$:
+\begin{enumerate}
+\item Compute $a$ and $b$ from following equations
+\begin{align*}
+  b^2 & =2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0 \\
+  a & =\frac{m}{1+b^2}
+\end{align*}
+\item Compute $Z_V=\Phi^{-1}(U_V)$
+\item Set $\hat{V}(t+\Delta)=a(b+Z_V)^2$
+\end{enumerate}
+\item Otherwise, if $\psi>\psi_c$
+\begin{enumerate}
+  \item Compute $\beta$ and $p$ according to equations
+  \begin{align*}
+    p & =\frac{\psi-1}{\psi+1}\in[0,1) \\
+    \beta & =\frac{1-p}{m}=\frac{2}{m(\psi+1)}>0
+  \end{align*}
+  \item set $\hat{V}(t+\Delta)=\Psi^{-1}(U_V;p,\beta)$
+  \begin{equation*}
+    \Psi(x) = \text{Pr}(\hat{V}(t+\Delta)\leq x) = p+(1-p)(1-e^{-\beta x}),\, x\geq 0
+  \end{equation*}
+  \[
+  \Psi^{-1}(u)=\Psi^{-1}(u;p,\beta)=
+  \begin{cases}
+    0,\,&0\leq u \leq p,\\
+    \beta^{-1}\ln(\frac{1-p}{1-u}),&p<u\leq1
+  \end{cases}
+  \]
+\end{enumerate}
+\end{enumerate}
 
-Tables: Type tables on separate pages after the references. Center the word "Table" followed by an Arabic numeral above the body of the table. Separate headings in a table from the title of the table and from the body of the table with solid lines. Verify that the text contains a reference to each table. When referring to a specific table in the text of the paper, use Table 1, Table 2, etc.
+\subsection{Broadie-Kaya discretization scheme for $\hat{X}$}
+First we integrate the SDE for $V(t)$ to have a bias-free scheme,
+\begin{equation*}
+  V(t+\Delta) = V(t)+\int_{t}^{t+\Delta}\kappa(\theta-V(u))\,\d u +\nu\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W_V(u)
+\end{equation*}
+and it can be written as
+\begin{equation}\label{dW_V}
+\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W_V(u)=\nu^{-1}\bigg(V(t+\Delta)- V(t)-\int_{t}^{t+\Delta}\kappa(\theta-V(u))\,\d u\bigg)
+\end{equation}
+Recall \eqref{logX}, by Cholesky decomposition, we have
+\begin{equation*}
+ \d \ln X(t)=(\mu-\frac{1}{2}V(t))\,\d t +\sqrt{V(t)}\big(\rho\,\d W_V(t)+\sqrt{1-\rho^2}\,\d W(t)\big)
+\end{equation*}
+where $W$ is a Brownian motion independent of $W_V$.
 
-Figures: Figures must appear after the tables. Verify that the text contains a reference to each figure. When referring to specific figures in the text, use Fig. 1, Fig. 2, etc. When labeling figures, capitalize the first letter in the word and number with Arabic numerals (e.g., Figure 1). In figure titles, capitalize the first letter of the first word only. When supplying color figures, ensure that there is sufficient contrast to enable clear black and white printing. No figures will be printed in color.
+Now we integrate the above equation,
+\begin{equation*}
+\begin{split}
+  \ln X(t+\Delta)=&\ln X(t) +\mu\Delta-\frac{1}{2}\int_{t}^{t+\Delta}V(u)\,\d u +\rho\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W_V(u)\\ &+\sqrt{1-\rho^2}\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u)
+\end{split}
+\end{equation*}
+Substituting Eq.\eqref{dW_V} into it, we get
+\begin{equation}\label{lnX}
+\begin{split}
+   \ln X(t+\Delta)=&\ln X(t)+\mu\Delta+\frac{\rho}{\nu}(V(t+\Delta)-V(t)-\kappa\theta\Delta)+\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)\int_{t}^{t+\Delta}V(u)\,\d u\\
+    &+\sqrt{1-\rho^2}\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u).
+\end{split}
+\end{equation}
+We need to find appropriate approximation for the integrals in Eq.\eqref{lnX}. For now, we simply write
+\begin{equation}\label{approx_du}
+  \int_{t}^{t+\Delta}V(u)\,\d u \approx \Delta[\gamma_1 V(t)+\gamma_2 V(t+\Delta)]
+\end{equation}
+Conditioning on $V(t)$ and $\int_{t}^{t+\Delta}V(u)\,\d u$, the It$\hat{\text{o}}$ integral
+\begin{equation*}
+  \int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u)
+\end{equation*}
+is Gaussian with mean zero and variance $\int_{t}^{t+\Delta}V(u)\,\d u$. So, we write
+\begin{equation*}
+  \int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u)\approx \Delta\sqrt{\gamma_1V(t)+\gamma_2V(t+\Delta)}\cdot Z
+\end{equation*}
+Therefore, we have the following discretiztion scheme
+\begin{equation}\label{eq3}
+  \text{ln}\hat{X}(t+\Delta)=\text{ln}\hat{X}(t)+K_0+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)+\sqrt{K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)}\cdot Z
+\end{equation}
+where $Z$ is a standard Gaussian random variable, independent of $\hat{V}$, and $K_0,\dots,K_4$ are given by
+\begin{align*}
+  K_0&=-\frac{\rho\kappa\theta}{\nu}\Delta &
+  K_1&=\gamma_1\Delta\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)-\frac{\rho}{\nu},\\ K_2&=\gamma_2\Delta\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)+\frac{\rho}{\nu}, & K_3&=\gamma_1\Delta(1-\rho^2), \\  K_4&=\gamma_2\Delta(1-\rho^2).
+\end{align*}
+where $\gamma_1=\gamma_2=\frac{1}{2}$ in Anderson (2006).
 
-\section{Major headings}
-Headings and Subheadings: Use no more than three levels of headings. Begin all headings at the left margin and capitalize the first letter of the first word only. Headings should be numbered as, e.g., 1, 1.3, 2.4.5, etc.
+\subsubsection{Implementation steps}
 
-\subsection{Sub-headings}
-Sub-headings should be typeset in boldface italics.
+With given values of $\gamma_1$ and $\gamma_2$ and combined with the simulation scheme of $V$, the discretization scheme for ln$X$ can be generated in the following fashion:
+\begin{enumerate}
+  \item Given $\hat{V}(t)$, generate $\hat{V}(t+\Delta)$ using QE schemes
+  \item Draw a uniform random number $U$, independent of all random numbers used for $\hat{V}(t+\Delta)$
+  \item Set $Z=\Phi^{-1}(U)$
+  \item Given ln$\hat{X}(t)$, $\hat{V}(t)$ and the value for $\hat{V}(t+\Delta)$ computed in Step 1, compute ln$\hat{X}(t+\Delta)$ from Eq.\eqref{eq3}
+\end{enumerate}
 
-\subsubsection{Sub-subheadings}
-Sub-subheadings should be typeset in italics.
+\subsubsection{Martingale correction}
+Under the QE scheme, a martingale correction scheme is illustrated in Andersen (2006).
+%\begin{equation*}
+%E(\hat{X}(t+\Delta)|\hat{X}(t))=\hat{X}e^{K^*_0+(K_1+\frac{1}{2}K_3)\hat{V}(t)}E(e^{(K_2+\frac{1}{2}K_4)\hat{V}(t+\Delta)})=\hat{X}
+%\end{equation*}
 
-\subsection{Numbering and spacing}
-Sections, sub-sections and sub-subsections are to be numbered in
-Arabic.
+\begin{equation*}
+  \text{ln}\hat{X}(t+\Delta)=\text{ln}\hat{X}(t)+K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)+\sqrt{K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)}\cdot Z
+\end{equation*}
+where
+\[
+  K_0^*=
+  \begin{cases}
+    -\frac{Ab^2a}{1-2Aa}+\frac{1}{2}\text{ln}(1-2Aa)-(K_1+\frac{1}{2}{K_3}){\hat{V}(t)},\,&\psi\leq\psi_c,\\
+    -\text{ln}\bigg(\frac{\beta(1-p)}{\beta-A}\bigg)-(K_1+\frac{1}{2}{K_3}){\hat{V}(t)},&\psi>\psi_c
+  \end{cases}
+  \]
+and $A=K_2+\frac{1}{2}K_4$.
+\section{Overcoming Numerical Errors for Samll Volatility of Volatility}
 
-\subsection{Lists of items}
-Lists may be laid out with each item marked by a dot:
+\section{Determining the Number of Samples Required to Meet a Specified Error Tolerance}
 
-\begin{itemlist}
- \item item one,
- \item item two.
-\end{itemlist}
+\section{Numerical Examples}
+
+\section{Discussion}
+
+\newpage
+
+%\section{General Appearance}	%) A SECTION HEADING
+
+
+%\section{Style Guidelines for IJFE}
+
+
+%Author Information: Include the following information on the first page of the manuscript: (1) title, (2) author(s), (3) institutional affiliation, (4) address, and (5) telephone number.
+
+%Abstract: Include a one-paragraph abstract of no more than 100 words. Do not include references, footnotes, or abbreviations in the abstract.
+
+%Keywords: Enclose with each manuscript, on a separate page, from three to five keywords.
+
+%Typing Format: Double space with a minimum of 11pt fonts. Margins of at least 1in.
+
+%Headings and Subheadings: Use no more than three levels of headings. Begin all headings at the left margin and capitalize the first letter of the first word only. Headings should be numbered as, e.g., 1, 1.3, 2.4.5, etc.
+
+%Footnotes: Each footnote should appear at the bottom of the page on which it is cited in the text and should be indicated consecutively with superscript Arabic numerals.
+
+%Equations: Number consecutively only those equations that are referenced in the text. Indent equations and place numbers in parentheses at the right margin.
+
+%References: List references alphabetically by author's last name at the end of the text of the paper. They can be cited in the text as, e.g., "According to Smith and Jones (1995), ..." or "... (Smith and Jones, 1995)".
+
+%Tables: Type tables on separate pages after the references. Center the word "Table" followed by an Arabic numeral above the body of the table. Separate headings in a table from the title of the table and from the body of the table with solid lines. Verify that the text contains a reference to each table. When referring to a specific table in the text of the paper, use Table 1, Table 2, etc.
+
+%Figures: Figures must appear after the tables. Verify that the text contains a reference to each figure. When referring to specific figures in the text, use Fig. 1, Fig. 2, etc. When labeling figures, capitalize the first letter in the word and number with Arabic numerals (e.g., Figure 1). In figure titles, capitalize the first letter of the first word only. When supplying color figures, ensure that there is sufficient contrast to enable clear black and white printing. No figures will be printed in color.
+
+%\section{Major headings}
+%Headings and Subheadings: Use no more than three levels of headings. Begin all headings at the left margin and capitalize the first letter of the first word only. Headings should be numbered as, e.g., 1, 1.3, 2.4.5, etc.
+
+%\subsection{Sub-headings}
+%Sub-headings should be typeset in boldface italics.
+
+%\subsubsection{Sub-subheadings}
+%Sub-subheadings should be typeset in italics.
+
+%\subsection{Numbering and spacing}
+%Sections, sub-sections and sub-subsections are to be numbered in
+%Arabic.
+
+%\subsection{Lists of items}
+%Lists may be laid out with each item marked by a dot:
+
+%\begin{itemlist}
+% \item item one,
+ %\item item two.
+%\end{itemlist}
 
 %\begin{romanlist}[(ii)]
 %\item item one
@@ -111,129 +275,81 @@ Lists may be laid out with each item marked by a dot:
 %	\end{romanlist}
 %\end{romanlist}
 
-\section{Equations}
-Displayed equations should be numbered consecutively in each
-section, with the number set flush right and enclosed in
-parentheses,
-
-\noindent
-\begin{equation}
-\mu(n, t) = \frac{\sum^\infty_{i=1} 1(d_i < t,
-N(d_i) = n)}{\int^t_{\sigma=0} 1(N(\sigma) = n)d\sigma}\,.
-\label{this}
-\end{equation}
-
-Equations should be referred to in abbreviated form,
-e.g."Eq.(\ref{this})" or "(4.1)". In multiple-line
-equations, the number should be given on the last line.
-
-Displayed equations are to be centered on the page width.
-Standard English letters like x are to appear as $x$
-(italicized) in the text if they are used as mathematical
-symbols. Punctuation marks are used at the end of equations as
-if they appeared directly in the text.
-
-\begin{theorem}
-Theorems$,$ lemmas$,$ etc. are to be numbered consecutively in the paper.
-\end{theorem}
-
-\begin{proof}
-Proofs should end with a square.
-\end{proof}
-
-\section{Illustrations and Photographs}
-Figures are to be inserted in the text nearest their first
-reference. Original India ink drawings of glossy prints are
-preferred. Please send one set of originals with copies. If the
-author requires the publisher to reduce the figures, ensure that
-the figures (including letterings and numbers) are large enough
-to be clearly seen after reduction. If photographs are to be
-used, only black and white ones are\break
-acceptable.
-
-\begin{figure}[th]
-\centerline{\includegraphics[width=2.2in]{ijmf1}}
-\vspace*{8pt}
-\caption{Labeled tree {\it T}.\label{fig1}}
-\end{figure}
-
-Figures are to be sequentially numbered in Arabic numerals. The
-caption must be placed below the figure. Typeset in 8~pt Times
-Roman with baselineskip of 10~pt. Use double spacing between a
-caption and the text that follows immediately.
-
-Previously published material must be accompanied by written
-permission from the author and publisher.
-
-Figures should be referred to in the abbreviated form,
-e.g.~``$\ldots$ in Fig.~\ref{fig1}'' or ``$\ldots$ in
-Figs.~\ref{fig1} and 2''. Where the word ``Figure'' begins a
-sentence, it should be spelt\break
-in full.
-
-\section{Tables}
-Tables should be inserted in the text as close to the point of
-reference as possible. Some space should be left above and below
-the table.
-
-\begin{table}[ht]
-\tbl{Comparison of acoustic for frequencies for piston-cylinder problem.}
-{\begin{tabular}{@{}cccc@{}} \toprule
-Piston mass & Analytical frequency & TRIA6-$S_1$ model &
-\% Error \\
-& (Rad/s) & (Rad/s) \\ \colrule
-1.0\hphantom{00} & \hphantom{0}281.0 & \hphantom{0}280.81 & 0.07 \\
-0.1\hphantom{00} & \hphantom{0}876.0 & \hphantom{0}875.74 & 0.03 \\
-0.01\hphantom{0} & 2441.0 & 2441.0\hphantom{0} & 0.0\hphantom{0} \\
-0.001 & 4130.0 & 4129.3\hphantom{0} & 0.16\\ \botrule
-\end{tabular}}
-\end{table}
-
-Tables should be numbered sequentially in the text in Arabic
-numerals. Captions are to be centralized above the tables.
-Typeset tables and captions in 8~pt Times Roman with
-baselineskip of 10~pt.
-
-If tables need to extend over to a second page, the continuation
-of the table should be preceded by a caption,
-e.g.~``Table~2. Cont'd.''
-
-\section{References}
-The format for references should be strictly followed.
-References in the text are to be numbered in Arabic numerals.
-They are to be cited in square brackets, \cite{2} before punctuation
-marks. Standard journal abbreviations are preferred.
-
-\section{Footnotes}
-Footnotes should be numbered sequentially in superscript Arabic
-numerals.\footnote{Footnotes should be typeset in 8~pt Times Roman
-at the bottom of the page.}
-
-\appendix
-
-\section{Appendices}
-
-Appendices should be used only when absolutely necessary. They
-should come before Acknowledgments. If there is more than one
-appendix, number them alphabetically.  Number displayed equations occurring in the Appendix
-in this way, e.g.~(\ref{appeqn}), (A.2), etc.
-\begin{equation}
-f(j\delta, i\delta) \cong \frac{\pi}{M} \sum^M_{n-1}
-Q_{\theta_n} (j\cos \theta_n + i\sin \theta_n)\, .\label{appeqn}
-\end{equation}
-
-\section*{Acknowledgments}
-This section should come before the References. Funding
-information may also be included here.
-
-\begin{thebibliography}{0}
+%\section{Equations}
+%Displayed equations should be numbered consecutively in each section, with the number set flush right and enclosed in parentheses,
 
 
-\bibitem{}Imai, J and KS Tan (2006). A general dimension reduction technique for derivative pricing, {\it Journal of Computational Finance}, 10(2), 129-155.
+%\begin{theorem}
+%Theorems$,$ lemmas$,$ etc. are to be numbered consecutively in the paper.
+%\end{theorem}
 
-\bibitem{} Joe, S and FY Kuo (2008). Constructing Sobol' sequences with better two-dimensional projection, {\it SIAM Journal on Scientific Computing}, 30(5), 2635-2654.
+%\begin{proof}
+%Proofs should end with a square.
+%\end{proof}
 
-\bibitem{} L'Ecuyer, P and C Lemieux (2002). Recent advances in randomized quasi-Monte Carlo methods, in M Dror, P L'Ecuyer and F Szidarovszki (editors),{\it  Modeling Uncertainty: An Examination of Stochastic Theory, Methods, and Applications}, pp. 419-474, Kluwer Academic, Boston.
+%\section{Illustrations and Photographs}
+%Figures are to be inserted in the text nearest their first reference. Original India ink drawings of glossy prints are preferred. Please send one set of originals with copies. If the author requires the publisher to reduce the figures, ensure that the figures (including letterings and numbers) are large enough to be clearly seen after reduction. If photographs are to be used, only black and white ones are\break acceptable.
+
+%\begin{figure}[th]
+%\centerline{\includegraphics[width=2.2in]{ijmf1}}
+%\vspace*{8pt}
+%\caption{Labeled tree {\it T}.\label{fig1}}
+%\end{figure}
+
+%Figures are to be sequentially numbered in Arabic numerals. The caption must be placed below the figure. Typeset in 8~pt Times Roman with baselineskip of 10~pt. Use double spacing between a caption and the text that follows immediately.
+
+%Previously published material must be accompanied by written permission from the author and publisher.
+
+%Figures should be referred to in the abbreviated form, e.g.~``$\ldots$ in Fig.~\ref{fig1}'' or ``$\ldots$ in Figs.~\ref{fig1} and 2''. Where the word ``Figure'' begins a sentence, it should be spelt\break in full.
+
+%\section{Tables}
+%Tables should be inserted in the text as close to the point of reference as possible. Some space should be left above and below the table.
+
+%\begin{table}[ht]
+%\tbl{Comparison of acoustic for frequencies for piston-cylinder problem.}
+%{\begin{tabular}{@{}cccc@{}} \toprule
+%Piston mass & Analytical frequency & TRIA6-$S_1$ model &
+%\% Error \\
+%& (Rad/s) & (Rad/s) \\ \colrule
+%1.0\hphantom{00} & \hphantom{0}281.0 & \hphantom{0}280.81 & 0.07 \\
+%0.1\hphantom{00} & \hphantom{0}876.0 & \hphantom{0}%875.74 & 0.03 \\
+%0.01\hphantom{0} & 2441.0 & 2441.0\hphantom{0} & %0.0\hphantom{0} \\
+%0.001 & 4130.0 & 4129.3\hphantom{0} & 0.16\\ \botrule
+%\end{tabular}}
+%\end{table}
+
+%Tables should be numbered sequentially in the text in Arabic numerals. Captions are to be centralized above the tables. Typeset tables and captions in 8~pt Times Roman with baselineskip of 10~pt.
+
+%If tables need to extend over to a second page, the continuation of the table should be preceded by a caption, e.g.~``Table~2. Cont'd.''
+
+%\section{References}
+%The format for references should be strictly followed. References in the text are to be numbered in Arabic numerals. They are to be cited in square brackets, \cite{2} before punctuation marks. Standard journal abbreviations are preferred.
+
+%\section{Footnotes}
+%Footnotes should be numbered sequentially in superscript Arabic numerals.\footnote{Footnotes should be typeset in 8~pt Times Roman at the bottom of the page.}
+
+%\appendix
+
+%\section{Appendices}
+
+%Appendices should be used only when absolutely necessary. They should come before Acknowledgments. If there is more than one appendix, number them alphabetically.  Number displayed equations occurring in the Appendix in this way, e.g.~(\ref{appeqn}), (A.2), etc.
+%\begin{equation}
+%f(j\delta, i\delta) \cong \frac{\pi}{M} \sum^M_{n-1}
+%Q_{\theta_n} (j\cos \theta_n + i\sin \theta_n)\, .\label{appeqn}
+%\end{equation}
+
+%\section*{Acknowledgments}
+%This section should come before the References. Funding
+%information may also be included here.
+
+\begin{thebibliography}{99}
+\bibitem{Andersen}Andersen, Leif B. G. (2006). Efficient Simulation of the Heston Stochastic Volatility Model.
+
+%\bibitem{}Imai, J and KS Tan (2006). A general dimension reduction technique for derivative pricing, {\it Journal of Computational Finance}, 10(2), 129-155.
+
+%\bibitem{} Joe, S and FY Kuo (2008). Constructing Sobol' sequences with better two-dimensional projection, {\it SIAM Journal on Scientific Computing}, 30(5), 2635-2654.
+
+%\bibitem{} L'Ecuyer, P and C Lemieux (2002). Recent advances in randomized quasi-Monte Carlo methods, in M Dror, P L'Ecuyer and F Szidarovszki (editors),{\it  Modeling Uncertainty: An Examination of Stochastic Theory, Methods, and Applications}, pp. 419-474, Kluwer Academic, Boston.
 
 \end{thebibliography}
 
