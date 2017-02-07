@@ -15,7 +15,7 @@
 \input{headingsIgor}
 
 \usepackage{graphicx}
-
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 \begin{document}
 
@@ -75,6 +75,8 @@ Heston model is defined as
   \end{align}
 \begin{align*}
 \text{where }&\\
+   & X\text{ is the asset price process}\\
+   & V\text{ is the stochastic volatility process}\\
    & \d W_1 \text{ and } \d W_2 \text{ are two standard Brownian motions which are correlated}\\
    &\rho \text{ is the correlation,} \\
    & \mu \text{ is the the risk-free interest rate,}\\%r \text{ and } d \text{ are respectively the continuously compounded risk-free interest rate and dividend yield,}  \\
@@ -89,7 +91,7 @@ Applying the Ito's formula to \eqref{eq1}, an equivalent form to simulate the pr
 \end{equation}
 
 \subsection{Quadratic Exponential Scheme}
-We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process. 
+We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process.
 \begin{enumerate}
 \item Given $\hat{V}(t)$, compute $m$ and $s^2$ from following equations
 \begin{align*}
@@ -102,8 +104,7 @@ We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite
 \begin{enumerate}
 \item Compute $a$ and $b$ from following equations
 \begin{align*}
-  b^2 & =2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0 \\
-  a & =\frac{m}{1+b^2}
+b^2=2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0, \qquad a =\frac{m}{1+b^2}.
 \end{align*}
 \item Compute $Z_V=\Phi^{-1}(U_V)$
 \item Set $\hat{V}(t+\Delta)=a(b+Z_V)^2$
@@ -112,8 +113,8 @@ We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite
 \begin{enumerate}
   \item Compute $\beta$ and $p$ according to equations
   \begin{align*}
-    p & =\frac{\psi-1}{\psi+1}\in[0,1) \\
-    \beta & =\frac{1-p}{m}=\frac{2}{m(\psi+1)}>0
+    p & =\frac{\psi-1}{\psi+1}\in[0,1), \qquad%\\
+    \beta =\frac{1-p}{m}=\frac{2}{m(\psi+1)}>0.
   \end{align*}
   \item set $\hat{V}(t+\Delta)=\Psi^{-1}(U_V;p,\beta)$
   \begin{equation*}
@@ -162,9 +163,9 @@ We need to find appropriate approximation for the integrals in Eq.\eqref{lnX}. F
   \int_{t}^{t+\Delta}V(u)\,\d u \approx \Delta[\gamma_1 V(t)+\gamma_2 V(t+\Delta)]
 \end{equation}
 Conditioning on $V(t)$ and $\int_{t}^{t+\Delta}V(u)\,\d u$, the It$\hat{\text{o}}$ integral
-\begin{equation*}
+$
   \int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u)
-\end{equation*}
+$
 is Gaussian with mean zero and variance $\int_{t}^{t+\Delta}V(u)\,\d u$. So, we write
 \begin{equation*}
   \int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u)\approx \Delta\sqrt{\gamma_1V(t)+\gamma_2V(t+\Delta)}\cdot Z
@@ -175,13 +176,13 @@ Therefore, we have the following discretiztion scheme
 \end{equation}
 where $Z$ is a standard Gaussian random variable, independent of $\hat{V}$, and $K_0,\dots,K_4$ are given by
 \begin{align*}
-  K_0&=-\frac{\rho\kappa\theta}{\nu}\Delta &
-  K_1&=\gamma_1\Delta\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)-\frac{\rho}{\nu},\\ K_2&=\gamma_2\Delta\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)+\frac{\rho}{\nu}, & K_3&=\gamma_1\Delta(1-\rho^2), \\  K_4&=\gamma_2\Delta(1-\rho^2).
+  K_0&=-\frac{\rho\kappa\theta}{\nu}\Delta, &
+  K_1&=\gamma_1\Delta\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)-\frac{\rho}{\nu}, &  K_2&=\gamma_2\Delta\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)+\frac{\rho}{\nu}, \\ K_3&=\gamma_1\Delta(1-\rho^2), & K_4&=\gamma_2\Delta(1-\rho^2).
 \end{align*}
 where $\gamma_1=\gamma_2=\frac{1}{2}$ in Anderson (2006).
 
 \subsubsection{Implementation steps}
-
+\textcolor[rgb]{1.00,0.00,0.00}{*Maybe delete implementation steps here and add those after our modification}\\
 With given values of $\gamma_1$ and $\gamma_2$ and combined with the simulation scheme of $V$, the discretization scheme for ln$X$ can be generated in the following fashion:
 \begin{enumerate}
   \item Given $\hat{V}(t)$, generate $\hat{V}(t+\Delta)$ using QE schemes
@@ -190,8 +191,8 @@ With given values of $\gamma_1$ and $\gamma_2$ and combined with the simulation 
   \item Given ln$\hat{X}(t)$, $\hat{V}(t)$ and the value for $\hat{V}(t+\Delta)$ computed in Step 1, compute ln$\hat{X}(t+\Delta)$ from Eq.\eqref{eq3}
 \end{enumerate}
 
-\subsubsection{Martingale correction}
-Under the QE scheme, a martingale correction scheme is illustrated in Andersen (2006).
+%\subsubsection{Martingale correction}
+Under the QE scheme, a martingale correction scheme is illustrated in Andersen (2006) as follows:
 %\begin{equation*}
 %E(\hat{X}(t+\Delta)|\hat{X}(t))=\hat{X}e^{K^*_0+(K_1+\frac{1}{2}K_3)\hat{V}(t)}E(e^{(K_2+\frac{1}{2}K_4)\hat{V}(t+\Delta)})=\hat{X}
 %\end{equation*}
@@ -208,7 +209,267 @@ where
   \end{cases}
   \]
 and $A=K_2+\frac{1}{2}K_4$.
-\section{Overcoming Numerical Errors for Samll Volatility of Volatility}
+\section{Overcoming Numerical Errors for Small Volatility of Volatility}
+\subsection{Modification of QE scheme without martingale correction}
+When $\nu$ equal or close to zero, the QE scheme we introduced above can be fragile. Our numerical results show that the option price deviate from that calculated by exact sampling\footnote{Introduced by Broadie, M. and Kaya, O. (2006) for the Heston stochastic volatility model.They applied the numerical inversion of a cumulative distribution using the characteristic function. The estimator of an asset price generate using the sample stock price and variance from the exact distribution is unbiased. The scheme is computationally expensive, so we used it as benchmarks for result comparison.} even further when the initial volatility $V_0$ not equals to long-term variance $\theta$. %So, we apply the change of variables technique to reduce the cancellation error.\\
+\subsubsection{Find more exact $\gamma_1$ and $\gamma_2$}
+Recall Eq.\eqref{lnX}, the Broadie-Kaya scheme in integral form is written as
+\begin{equation*}
+\begin{split}
+    \text{ln}X(t+\Delta)=&\text{ln}X(t)+\frac{\rho}{\nu}(V(t+\Delta)-V(t)-\kappa\theta\Delta)+\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)\int_{t}^{t+\Delta} V(u)du\\
+     &+\sqrt{1-\rho^2}\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u).
+\end{split}
+\end{equation*}
+We need to handle the time-integral of $V$. Rather than simply setting $\gamma_1=\gamma_2=\frac{1}{2}$, we want to find the exact value of $\gamma_1$ and $\gamma_2$ that make the following equation holds.\\
+When $\nu=0$, the stochastic partial differential equation of $V$ (Eq.\eqref{eq2}) has a solution in form
+\begin{equation}\label{V nu=0}
+  V(t)=\theta + (V(0)-\theta)e^{-\kappa t}
+\end{equation}
+Denote $C=V(0)-\theta$,then $V(t)-\theta= Ce^{-\kappa t}$.\\
+%\begin{equation}\label{V C}
+%  V(t)-\theta= Ce^{-\kappa t}
+%\end{equation}
+We have
+\begin{equation}\label{int V}
+  \begin{split}
+    \int_{t}^{t+\Delta}V(u)\,\d u&= \int_{t}^{t+\Delta}(V(u)-\theta)\,\d u+\theta\Delta\\
+    &=\int_{t}^{t+\Delta}Ce^{-\kappa u}\,\d u +\theta\Delta\\
+    &=\frac{-Ce^{-\kappa(t+\Delta)}+Ce^{-\kappa t}}{\kappa}+\theta\Delta\\
+    %&=\frac{V(t)-\theta-V(t+\Delta)+\theta}{\kappa}+\theta\Delta.
+  \end{split}
+\end{equation}
+We want find a expression of $\theta$ written in terms of $V(t)$ and $V(t+\Delta)$.\\
+Set time to be $t+\Delta$ in Eq.\eqref{V nu=0} and multiply $e^{\kappa\Delta}$ on both sides, we have
+%\begin{equation*}
+%  V(t+\Delta)-\theta = Ce^{-\kappa(t+\Delta)}
+%\end{equation*}
+%Multiply $e^{\kappa\Delta}$ on both sides,
+\begin{equation*}
+  e^{\kappa\Delta}(V(t+\Delta)-\theta)=Ce^{-\kappa  t}
+\end{equation*}
+Combine with $V(t)-\theta= Ce^{-\kappa t}$, we have the expression of $\theta$ as
+\begin{equation*}
+%  \begin{split}
+%    & e^{\kappa\Delta}V(t+\Delta)-V(t)+\theta(1-e^{\kappa\Delta})=0 \\
+%    & \theta=\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}
+%  \end{split}
+\theta=\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}
+\end{equation*}
+Substitute the expression of $\theta$ into equation \eqref{int V}, we get
+\begin{equation*}
+  \begin{split}
+    \int_{t}^{t+\Delta}V(u)\d u &= \frac{V(t)-V(t+\Delta)}{\kappa}+\Delta\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}  \\
+    &=\frac{V(t)(1-e^{\kappa\Delta}+\kappa\Delta)-V(t+\Delta)(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{\kappa(1-e^{\kappa\Delta})} \\
+     &=\Delta[\gamma_1 V(t)+\gamma_2 V(t+\Delta)]
+  \end{split}
+\end{equation*}
+where
+%\begin{align*}
+%  \gamma_1 &= \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})} &
+%  \gamma_2 &= -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}
+%\end{align*}
+$\gamma_1 = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})}$,
+$\gamma_2 = -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}$.
+We know $\gamma_1\geq 0$ and $\gamma_2\geq 0$.\\
+As $\kappa\Delta\rightarrow 0$, \begin{align*}
+ \gamma_1 &\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} \\
+  \gamma_2 &\rightarrow\frac{-(1+\kappa\Delta+\frac{1}{2}(\kappa\Delta)^2)(1-\kappa\Delta)+1}{\kappa\Delta(\kappa\Delta)}
+  \rightarrow\frac{-(1-(\kappa\Delta)^2)-\frac{1}{2}(\kappa\Delta)^2+\frac{1}{2}(\kappa\Delta)^3+1}{(\kappa\Delta)^2}\rightarrow\frac{1}{2}
+\end{align*}
+When $\kappa\Delta$ goes to zero, our scheme just like the Euler scheme.
+\subsubsection{Change of variables}
+We want to do change of variable of $s^2, m, \psi, b^{-2}, a, b, K_0,K_1,K_2, K_3,$ and $ K_4$ in a way that $\nu$ becomes multiplier rather than divisor.\\
+For parameters in QE scheme, we do change of variables.
+%\begin{align*}
+%s^2&=\nu^2\tilde{s}^2 & \tilde{s}^2 &=\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2, \\
+%m&=\tilde{m} & \tilde{m} &=\Theta + \hat{V}(t)e^{-\kappa\Delta} \\
+%  \psi&=\tilde{\psi}\nu^2, & \tilde{\psi}&=\bigg(\frac{\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}(1-e^{-\kappa\Delta})+\frac{\theta}{2\kappa}(1-e^{-\kappa\Delta})^2}{(\theta+(\hat{V}(t)-\theta)e^{-\kappa\Delta})^2}\bigg)\\
+%  b^{-2}&=\nu^2\tilde{b}^{-2}, & \tilde{b}^{-2}&=\frac{\tilde{\psi}}{2\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg(1+\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg)} \\
+%  a&=\tilde{a}\nu^2, & \tilde{a}&=\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}
+%\end{align*}
+\begin{align*}
+s^2&=\nu^2\tilde{s}^2={\nu}^2\bigg(\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2\bigg),
+\quad m=\tilde{m}=\Theta + \hat{V}(t)e^{-\kappa\Delta}, \\
+  \psi&=\nu^2\tilde{\psi}=\nu^2\bigg(\frac{\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}(1-e^{-\kappa\Delta})+\frac{\theta}{2\kappa}(1-e^{-\kappa\Delta})^2}{(\theta+(\hat{V}(t)-\theta)e^{-\kappa\Delta})^2}\bigg),\\
+b^{-2}&=\nu^2\tilde{b}^{-2}=\nu^2\frac{\tilde{\psi}}{2\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg(1+\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg)} ,\quad
+a=\nu^2\tilde{a}=\nu^2\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}.
+\end{align*}
+Similarly, for parameters in Broadie-Kaya discretization scheme, we have
+\begin{align*}
+   K_0&=\frac{1}{\nu}\tilde{K}_0 =\frac{1}{\nu}(-\rho\kappa\theta\Delta),&   K_1&=\frac{1}{\nu}\tilde{K_1}=\frac{1}{\nu}\bigg[\rho[\kappa\gamma_1\Delta-1]-\frac{\nu\gamma_1\Delta}{2}\bigg],
+&  K_2&=\frac{1}{\nu}\tilde{K_2}=\frac{1}{\nu}\bigg[\rho[\kappa\gamma_2\Delta-1]-\frac{\nu\gamma_2\Delta}{2}\bigg],\\
+   K_3&=\tilde{K}_3=\gamma_1\Delta(1-\rho^2), & K_4&=\tilde{K}_4=\gamma_2\Delta(1-\rho^2).
+\end{align*}
+%\subsubsection{Change of variables for calculating $\hat{X}$}
+%For Eq.\eqref{eq2}, set $\nu=0$, we have
+%\begin{equation*}
+% \begin{split}
+% \text{d}V(t)&=\kappa(\theta-V(t))\,\text{d}t\\
+% V(T) &=\theta+(V(t)-\theta)e^{-\kappa(T-t)}
+%\end{split}
+%\end{equation*}
+Now we use new variables we defined to calculate $\hat{X}$. Recall Eq.\eqref{eq3}:
+\begin{equation*}
+  \text{ln}\hat{X}(t+\Delta)=\text{ln}\hat{X}(t)+K_0+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)+\sqrt{K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)}\cdot Z
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\hat{V}(t+\Delta)&=\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}(\tilde{b}+\nu Z_V)^2\\
+&=\frac{m}{1+\nu^2\tilde{b}^{-2}}(1+\nu\tilde{b}^{-1}Z_V)^2\\
+&=\frac{\theta+\tilde{V}(t)e^{-\kappa\Delta}}{1+\nu^2\tilde{b}^{-2}}(1+\nu\tilde{b}^{-1}Z_V)^2
+\end{split}
+\end{equation*}
+Define $\tilde{V}(t)=\hat{V}(t)-\theta$. \\
+Substitute the above equation into the following equation,
+\begin{equation*}
+\begin{split}
+\tilde{V}(t+\Delta)&=\hat{V}(t+\Delta)-\theta\\
+&=\frac{\theta+\tilde{V}(t)e^{-\kappa\Delta}}{1+\nu^2\tilde{b}^{-2}}(1+\nu\tilde{b}^{-1}Z_V)^2-\theta\\
+&=\frac{\theta[(1+\nu\tilde{b}^{-1}Z_V)^2-(1+\nu^2\tilde{b}^{-2})]+\tilde{V}(t)e^{-\kappa\Delta}(1+\nu\tilde{b}^{-1}Z_V)^2}{1+\nu^2\tilde{b}^{-2}}\\
+%&=\frac{\theta\nu[2\tilde{b}^{-1}Z_V+\nu(\tilde{b}^{-2}Z_V^2-\tilde{b}^{-2})]+\tilde{V}(t)e^{-\kappa\Delta}(1+\nu\tilde{b}^{-1}Z_V)^2}{1+\nu^2\tilde{b}^{-2}}\\
+&=\frac{\theta\nu(2\tilde{b}^{-1}Z_V+\nu\tilde{b}^{-2}(Z_V^2-1))+\tilde{V}e^{-\kappa\Delta}(1+\nu\tilde{b}^{-1}Z_V)^2}{1+\nu^2\tilde{b}^{-2}}
+\end{split}
+\end{equation*}
+Define $\nu \mathring{V}(t+\Delta)=\tilde{V}(t+\Delta)-\tilde{V}(t)e^{-\kappa\Delta}$.\\
+\begin{equation*}
+\begin{split}
+\mathring{V}(t+\Delta)&=\frac{1}{\nu}[\tilde{V}(t+\Delta)-\tilde{V}(t)e^{-\kappa\Delta}]\\
+&=\frac{1}{\nu}[\hat{V}(t+\Delta)-(\theta+\tilde{V}(t)e^{-\kappa\Delta})]\\
+&=\frac{\theta+\tilde{V}(t)e^{-\kappa\Delta}}{\nu}\bigg[\frac{(1+\nu\tilde{b}^{-1}Z_V)^2}{1+\nu^2b^{-2}}-1\bigg]\\
+&=(\theta+\tilde{V}(t)e^{-\kappa\Delta})\bigg[\frac{2\tilde{b}^{-1}Z_V}{1+\nu^2\tilde{b}^{-2}}+\nu\frac{\tilde{b}^{-2}(Z_V^2-1)}{1+\nu^2\tilde{b}^{-2}}\bigg]
+\end{split}
+\end{equation*}
+In order to calculate $\text{ln}\hat{X}$,we do the following calculation first.\\
+\begin{equation*}
+\begin{split}
+&\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta)\\
+=& (\gamma_1+\gamma_2e^{-\kappa\Delta})\tilde{V}(t)+\gamma_2\nu\mathring{V}(t+\Delta)\\
+=& \frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu\mathring{V}(t+\Delta).
+\end{split}
+\end{equation*}
+Substituting the above equation into the following equations, we get
+\begin{equation}\label{QEK0K1K2}
+\begin{split}
+&K_0+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
+=&(K_0+\theta K_1+\theta K_2)+K_1\tilde{V}(t)+K_2\tilde{V}(t+\Delta)\\
+=&\frac{\rho\kappa\Delta}{\nu}(-\theta+\gamma_1\theta+\gamma_2\theta)-\frac{\rho\theta}{\nu}+\frac{\rho\theta}{\nu}+\theta\Delta(-\frac{1}{2})(\gamma_1+\gamma_2)\\
+&+\frac{\kappa\Delta\rho}{\nu}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}(-\tilde{V}(t)+\tilde{V}(t+\Delta))\\
+=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}[(-1+\kappa\Delta\gamma_1)\tilde{V}(t)+(1+\kappa\Delta\gamma_2)\tilde{V}(t+\Delta)]\\
+=&\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}\bigg[\frac{\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\tilde{V}(t+\Delta)-\frac{\kappa\Delta}{e^{\kappa\Delta}-1}\tilde{V}(t)\bigg]\\
+=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}\frac{\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}(\tilde{V}(t+\Delta)-\tilde{V}(t)e^{-\kappa\Delta})\\
+=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\mathring{V}(t+\Delta)\\
+=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu\mathring{V}(t+\Delta)\bigg)+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\mathring{V}(t+\Delta)\\
+=&-\theta\frac{\Delta}{2}-\frac{1-e^{-\kappa\Delta}}{2\kappa}\tilde{V}(t)-\bigg(\frac{\nu(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{2\kappa(1-e^{\kappa\Delta})}+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{1-e^{\kappa\Delta}}\bigg)\mathring{V}(t+\Delta)
+\end{split}
+\end{equation}
+%Define $\tilde{V}(t)=\hat{V}(t)-\theta$. \\
+%If $\nu=0$, we have $$\hat{V}(t+\Delta)-\theta=(\hat{V}(t)-\theta)e^{-\kappa\Delta}$$
+%
+%i.e. $$\tilde{V}(t+\Delta)=\tilde{V}(t)e^{-\kappa\Delta}$$
+%\begin{align*}
+%&K_0+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)=K_0+K_1(\tilde{V}(t)+\theta)+K_2(\tilde{V}(t+\Delta)+\theta)\\
+%=&(K_0+K_1\theta+K_2\theta)+K_1\tilde{V}(t)+K_2\tilde{V}(t+\Delta)\\
+%=&-\frac{\rho\kappa\Delta}{\nu}(-\theta+\gamma_1\theta+\gamma_2\theta)-\frac{1}{2}\Delta\theta(\gamma_1+\gamma_2)+\frac{\rho}{\nu}(\gamma_1\Delta\kappa-1)\tilde{V}(t)\\
+%&-\frac{1}{2}\gamma_1\Delta\tilde{V}(t)+\frac{\rho}{\nu}(\gamma_2\Delta\kappa+1)\tilde{V}(t+\Delta)-\frac{1}{2}\gamma_2\Delta\tilde{V}(t+\Delta)
+%\end{align*}
+Moreover,
+\begin{align*}
+&K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)\\
+=&\gamma_1\Delta(1-\rho^2)\hat{V}(t)+\gamma_2\Delta(1-\rho^2)\hat{V}(t+\Delta)\\
+=&\Delta(1-\rho^2)[\gamma_1(\theta+\tilde{V}(t))+\gamma_2(\theta+\tilde{V}(t+\Delta))]\\
+=&\Delta(1-\rho^2)[\theta+(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))]\\
+=&\Delta(1-\rho^2)\big[\theta+\big((\gamma_1+\gamma_2e^{-\kappa\Delta})\tilde{V}(t)+\gamma_2\nu \mathring{V}(t+\Delta)\big)\big]\\
+=&\Delta(1-\rho^2)\bigg[\theta+\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu \mathring{V}(t+\Delta)\bigg)\bigg]\numberthis\label{QEK3K4}
+\end{align*}
+
+We can rewrite the discretization scheme.\\
+For $X$ when $\nu^2\tilde{\psi} \leq \psi_C $:
+\begin{equation}\label{newLnX}
+\begin{split}
+  \ln\hat{X}(t+\Delta)=&\ln\hat{X}(t)-\theta\frac{\Delta}{2}-\frac{1-e^{-\kappa\Delta}}{2\kappa}\tilde{V}(t)-\bigg(\frac{\nu(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{2\kappa(1-e^{\kappa\Delta})}+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{1-e^{\kappa\Delta}}\bigg)\mathring{V}(t+\Delta)\\
+  &+\sqrt{\Delta(1-\rho^2)\bigg[\theta+\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu \mathring{V}(t+\Delta)\bigg)\bigg]}\cdot Z
+\end{split}
+\end{equation}
+For $X$ when $\nu^2\tilde{\psi} > \psi_C $:
+\begin{equation}\label{newLnX2}
+  \text{ln}\hat{X}(t+\Delta)=\text{ln}\hat{X}(t)+\tilde{K}_0+\frac{1}{\nu}\tilde{K}_1\hat{V}(t)+\frac{1}{\nu}\tilde{K}_2\hat{V}(t+\Delta)+\sqrt{\tilde{K}_3\hat{V}(t)+\tilde{K}_4\hat{V}(t+\Delta)}\cdot Z
+\end{equation}
+\subsubsection{The new algorithm for modified QE scheme and the discretization scheme of $X$}
+Summary of QE algorithm and the discretization scheme of $X$:\\
+\begin{enumerate}
+\item Given $\hat{V}(t)$, compute $m$ and $S^2$ from following equations
+\begin{align*}
+  \tilde{m} &=\Theta + \tilde{V}(t)e^{-\kappa\Delta} \\
+  \tilde{s}^2 &=\frac{(\tilde{V}(t)+\theta) e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2
+\end{align*}
+\item Compute $\tilde{\psi}=\tilde{s}^2/\tilde{m}^2$\\
+\item Generate two Brownian motion random variables $Z_V$ and $Z$ from GAIL\\
+\item If $\psi\leq\psi_c$:
+\begin{enumerate}
+\item Compute $a$ and $b$ from following equations
+\begin{align*}
+  \tilde{b}^{-2} & =\frac{\tilde{\psi}}{2\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg(1+\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg)}\\
+  \tilde{a} & =\frac{\tilde{m}\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}
+\end{align*}
+%\item Compute $Z_V=\Phi^{-1}(U_V)$
+\item Set $\tilde{V}(t+\Delta)=-\theta + \tilde{a}(\tilde{b}+\nu Z_V)^2$
+\item Compute $\mathring{V}(t+\Delta)={(\theta+\tilde{V}(t)e^{-\kappa\Delta})\bigg[\frac{2\tilde{b}^{-1}Z_V}{1+\nu^2\tilde{b}^{-2}}+\frac{\nu\tilde{b}^{-2}(Z_V^2-1)}{1+\nu^2\tilde{b}^{-2}}\bigg]}$
+  \item Given $\tilde{V}(t)$, generate $\tilde{V}(t+\Delta)$
+  \item Given $\ln\hat{X}(t)$, $\tilde{V}(t)$ and the value for $\mathring{V}(t+\Delta)$, compute $\ln \hat{X}(t+\Delta)$ from Eq.\eqref{newLnX}
+\end{enumerate}
+\item Otherwise, if $\nu^2\tilde{\psi}>\psi_c$
+\begin{enumerate}
+  \item Compute $\beta$ and $p$ according to equations
+  \begin{align*}
+    p & =\frac{\nu^2\tilde{\psi}-1}{\nu^2\tilde{\psi}+1}\in[0,1) \\
+    \beta & =\frac{1-p}{\tilde{m}}=\frac{2}{\tilde{m}(\nu^2\tilde{\psi}+1)}>0
+  \end{align*}
+  \item Draw a uniform random number $U_V$
+  \item Set $\tilde{V}(t+\Delta)=-\theta+\Psi^{-1}(U_V;p,\beta)$
+  \item Given $\tilde{V}(t)$, generate $\tilde{V}(t+\Delta)$
+  \item Given ln$\hat{X}(t)$, $\tilde{V}(t)$ and the value for $\tilde{V}(t+\Delta)$, compute ln$\hat{X}(t+\Delta)$ from Eq.\eqref{newLnX2}
+\end{enumerate}
+\end{enumerate}
+\subsection{QE scheme with martingale correction}
+\subsubsection{Cancel out $\frac{1}{\nu}$ in the expression of $\ln X$}
+We calculate $K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)$ first. \\
+Recall $K_0^*= -\frac{Ab^2a}{1-2Aa}+\frac{1}{2}\ln(1-2Aa)-(K_1+\frac{1}{2}K_3)\hat{V}(t)$ for case $\psi\leq\psi_c$, where $A=K_2+\frac{1}{2}K_4$.
+\begin{align*}
+  -\frac{Ab^2a}{1-2Aa} &= -\frac{1}{\nu}\frac{\tilde{A}\tilde{a}\tilde{b^2}}{1-2\nu\tilde{A}\tilde{a}}\\
+  \tilde{A}\tilde{a}&= [\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}
+\end{align*}
+So,
+\begin{equation*}
+  -\frac{Ab^2a}{1-2Aa}=-\frac{1}{\nu}\frac{[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]m}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
+\end{equation*}
+Substituting $m=\theta+\tilde{V}(t+\Delta)-\nu\mathring{V}(t+\Delta)$ in to the above equation,
+\begin{equation*}
+\begin{split}
+  -\frac{Ab^2a}{1-2Aa}=&-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  &+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
+\end{split}
+\end{equation*}
+Therefore,
+\begin{equation*}
+  \begin{split}
+    &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
+    =&-\frac{Ab^2a}{1-2Aa}+\frac{1}{2}\ln(1-2Aa)-(K_1+\frac{1}{2}K_3)\hat{V}(t)+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
+    =&+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
+  &-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}(\theta+\tilde{V}(t)e^{-\kappa\Delta})[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}+\frac{\rho}{\nu}(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))
+  \end{split}
+\end{equation*}
+Rewrite the last term that contains $\frac{1}{\nu}$ in the above equation, we finally get
+\begin{align*}
+  &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
+  =&\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
+  &+\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))\frac{\nu\tilde{b}^{-2}-2\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
+\end{align*}
+For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without martingale correction.\\
 
 \section{Determining the Number of Samples Required to Meet a Specified Error Tolerance}
 
