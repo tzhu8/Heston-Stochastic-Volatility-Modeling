@@ -73,25 +73,28 @@ Heston model is defined as
     \d X & =\mu X\,\d t+\sqrt{V}X\,\d W_1\label{eq1}\\
     \d V &= -\kappa (\theta-V)\,\d t +\nu\sqrt{V}\,\d W_2\label{eq2}
   \end{align}
-\begin{align*}
-\text{where }&\\
-   & X\text{ is the asset price process}\\
-   & V\text{ is the stochastic volatility process}\\
-   & \d W_1 \text{ and } \d W_2 \text{ are two standard Brownian motions which are correlated}\\
-   &\rho \text{ is the correlation,} \\
-   & \mu \text{ is the the risk-free interest rate,}\\%r \text{ and } d \text{ are respectively the continuously compounded risk-free interest rate and dividend yield,}  \\
-   & \kappa \text{ is the speed of mean reversion,} \\
-   & \theta \text{ is the value of the long-term variance,} \\
-   & \nu \text{ is the volatility of volatility.}
-\end{align*}
+  
+ The first equation simulates the asset price process and the second equation gives the evolution of the volatility process. $X$ denotes the asset price. $V$ is the stochastic volatility process. $\d W_1$ and $\d W_2$ are two standard Brownian motions with a correlation constant $\rho$. $\mu$, $\kappa$, $\theta$, $\nu$ are constant parameters $\mu$ is the risk-free interest rate. $\kappa$ is the speed of mean reversion. $\theta$ is the value of the long-term variance. $\nu$ is the volatility of volatility.
+ 
+%\begin{align*}
+%\text{where }&\\
+%   & X\text{ is the asset price process}\\
+%   & V\text{ is the stochastic volatility process}\\
+%   & \d W_1 \text{ and } \d W_2 \text{ are two standard Brownian motions which are correlated}\\
+%   &\rho \text{ is the correlation,} \\
+%   & \mu \text{ is the the risk-free interest rate,}\\%r \text{ and } d \text{ are respectively the continuously compounded risk-free interest rate and dividend yield,}  \\
+%   & \kappa \text{ is the speed of mean reversion,} \\
+%   & \theta \text{ is the value of the long-term variance,} \\
+%   & \nu \text{ is the volatility of volatility.}
+%\end{align*}
 
-Applying the Ito's formula to \eqref{eq1}, an equivalent form to simulate the process of asset price is shown in Eq.(\ref{logX}).
+Applying the Ito's formula to \eqref{eq1}, an equivalent form to simulate the process of asset price is shown in \eqref{logX}.
 \begin{equation}\label{logX}
   \d\ln(X)=(\mu-\frac{V}{2})\,\d t+\sqrt{V}\,\d W_1
 \end{equation}
 
 \subsection{Quadratic Exponential Scheme}
-We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process.
+We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process. Detailed steps are listed as follows:
 \begin{enumerate}
 \item Given $\hat{V}(t)$, compute $m$ and $s^2$ from following equations
 \begin{align*}
@@ -131,6 +134,9 @@ b^2=2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0, \qquad a =\frac{m}{
 \end{enumerate}
 
 \subsection{Broadie-Kaya discretization scheme for $\hat{X}$}
+
+We used the Broafie-Kaya scheme to simulate the asset price process. We give a brief derivation of this scheme here. Details are illustrated in Andersen (2006) \cite{Andersen}.
+
 First we integrate the SDE for $V(t)$ to have a bias-free scheme,
 \begin{equation*}
   V(t+\Delta) = V(t)+\int_{t}^{t+\Delta}\kappa(\theta-V(u))\,\d u +\nu\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W_V(u)
