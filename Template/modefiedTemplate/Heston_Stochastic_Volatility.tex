@@ -15,6 +15,7 @@
 \input{headingsIgor}
 
 \usepackage{graphicx}
+\graphicspath{ {graphs/} }
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
 \begin{document}
@@ -30,8 +31,7 @@
 10~pt Times Roman uppercase and boldface. Please write
 down in pencil a short title to be used as the running head.}}
 
-\author{FIRST A. AUTHOR, SECOND B. AUTHOR and THIRD
-C. AUTHOR\footnote{Typeset names in 8~pt Times Roman, uppercase and lightface.  Use footnotes only to indicate if permanent and present addresses are different. Funding information should go in the Acknowledgement section.}}
+\author{Xiaoyang Zhao, Tianci Zhu and Fred J. Hickernell\footnote{Typeset names in 8~pt Times Roman, uppercase and lightface.  Use footnotes only to indicate if permanent and present addresses are different. Funding information should go in the Acknowledgement section.}}
 
 \address{Full affiliations\footnote{Typeset
 affiliation and mailing addresses in 8pt Times italic.} \\
@@ -62,7 +62,7 @@ There are several well-known stochastic volatility models: the Hull-white model 
 The QE model was developed by Andersen (2006). It is a market standard simulation method for the Heston model. Its attractiveness lies in its efficiency. It relies on simple probability density functions and needs a moderate amount of storage. Depending on the value of the volatility, the QE scheme approximates its distribution using either Gaussian or exponential distribution. After getting the value of the volatility for each time step, we discretize the asset price process. As we know, the computation of Broadie-Kaya algorithm is time consuming, but it is bias-free by construction. We discretize its scheme to get the simulation of the dynamic of asset price process. The Broadie-Kaya scheme does not satisfy an equivalent discrete-time martingale condition. The martingale property can be attained by adjusting a certain term in the scheme.
 
 
-The GAIL is a suite of algorithms that includes Monte Carlo methods for multidimensional integration and computation of means, which is developed by Professor Hickernell and his collaborators. GAIL has theoretical guarantees that the user-defined error tolerance will be met. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class. 
+The GAIL is a suite of algorithms that includes Monte Carlo methods for multidimensional integration and computation of means, which is developed by Professor Hickernell and his collaborators. GAIL has theoretical guarantees that the user-defined error tolerance will be met. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class.
 
 The setup of the paper is as follows: we first introduce Heston model, QE scheme and the brief idea behind GAIL. Then, we explain our new algorithm and the improved algorithm using variance reduction techniques. At last, we show its performance in comparison with various widespread used schemes and with different variance reduction applications
 
@@ -217,7 +217,17 @@ where
 and $A=K_2+\frac{1}{2}K_4$.
 \section{Overcoming Numerical Errors for Small Volatility of Volatility}
 \subsection{Modification of QE scheme without martingale correction}
-When $\nu$ equal or close to zero, the QE scheme we introduced above can be fragile. Our numerical results show that the option price deviate from that calculated by exact sampling\footnote{Introduced by Broadie, M. and Kaya, O. (2006) for the Heston stochastic volatility model.They applied the numerical inversion of a cumulative distribution using the characteristic function. The estimator of an asset price generate using the sample stock price and variance from the exact distribution is unbiased. The scheme is computationally expensive, so we used it as benchmarks for result comparison.} even further when the initial volatility $V_0$ not equals to long-term variance $\theta$. %So, we apply the change of variables technique to reduce the cancellation error.\\
+When $\nu$ equal or close to zero, the QE scheme we introduced above can be fragile. Our numerical results show that the option price given by QE scheme deviate from that calculated by exact sampling\footnote{Introduced by Broadie, M. and Kaya, O. (2006) for the Heston stochastic volatility model.They applied the numerical inversion of a cumulative distribution using the characteristic function. The estimator of an asset price generate using the sample stock price and variance from the exact distribution is unbiased. The scheme is computationally expensive, so we used it as benchmarks for result comparison.} and our modified scheme even further when the initial volatility $V_0$ not equals to long-term variance $\theta$. %So, we apply the change of variables technique to reduce the cancellation error.\\
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.55\textwidth]{FigureIn2_3_1}
+\caption{European call option price calculated by QE scheme and our modified QE scheme. Initial price $=80$, strike $=100$, interest $=0$, $\kappa=1$, $\nu=0.5$, $\rho=-0.3$, $\theta=0.09$ and $V_0=0.36$. Small circles denote the price calculated by our modified QE scheme when the relative tolerance = 0.01 was met. The stars denote the price calculated by original QE scheme. The dot-dashed line denotes the option price calculated by Black-Scholes formula when $\nu=0$. The dashed line at the bottom denotes the option price given by QE scheme when $\nu=0$. }
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.55\textwidth]{FigureIn2_3_1_log}
+\end{figure}
+
 \subsubsection{Find more exact $\gamma_1$ and $\gamma_2$}
 Recall Eq.\eqref{lnX}, the Broadie-Kaya scheme in integral form is written as
 \begin{equation*}
@@ -404,7 +414,7 @@ For $X$ when $\nu^2\tilde{\psi} > \psi_C $:
 \begin{equation}\label{newLnX2}
   \text{ln}\hat{X}(t+\Delta)=\text{ln}\hat{X}(t)+\tilde{K}_0+\frac{1}{\nu}\tilde{K}_1\hat{V}(t)+\frac{1}{\nu}\tilde{K}_2\hat{V}(t+\Delta)+\sqrt{\tilde{K}_3\hat{V}(t)+\tilde{K}_4\hat{V}(t+\Delta)}\cdot Z
 \end{equation}
-Since the discretization scheme is unstable only when $\nu$ is very small, for the $\nu^2\tilde{\psi} > \psi_C $ case, the scheme remains unchanged. We just rewrite it in terms of new variables. 
+Since the discretization scheme is unstable only when $\nu$ is very small, for the $\nu^2\tilde{\psi} > \psi_C $ case, the scheme remains unchanged. We just rewrite it in terms of new variables.
 \subsubsection{The new algorithm for modified QE scheme and the discretization scheme of $X$}
 Summary of QE algorithm and the discretization scheme of $X$:\\
 \begin{enumerate}
@@ -445,18 +455,18 @@ Summary of QE algorithm and the discretization scheme of $X$:\\
 \subsubsection{Cancel out $\frac{1}{\nu}$ in the expression of $\ln X$}
 We calculate $K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)$ first. \\
 Recall $K_0^*= -\frac{Ab^2a}{1-2Aa}+\frac{1}{2}\ln(1-2Aa)-(K_1+\frac{1}{2}K_3)\hat{V}(t)$ for case $\psi\leq\psi_c$, where $A=K_2+\frac{1}{2}K_4$.
-\begin{align*}
-  -\frac{Ab^2a}{1-2Aa} &= -\frac{1}{\nu}\frac{\tilde{A}\tilde{a}\tilde{b^2}}{1-2\nu\tilde{A}\tilde{a}}\\
-  \tilde{A}\tilde{a}&= [\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}
-\end{align*}
-So,
+%\begin{align*}
+%  -\frac{Ab^2a}{1-2Aa} &= -\frac{1}{\nu}\frac{\tilde{A}\tilde{a}\tilde{b^2}}{1-2\nu\tilde{A}\tilde{a}}\\
+%  \tilde{A}\tilde{a}&= [\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}
+%\end{align*}
+Rewrite the first part of $K_0^*$ in terms of new parameters we defined and substituting \\$m=\theta+\tilde{V}(t+\Delta)-\nu\mathring{V}(t+\Delta)$ into it,
 \begin{equation*}
-  -\frac{Ab^2a}{1-2Aa}=-\frac{1}{\nu}\frac{[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]m}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
-\end{equation*}
-Substituting $m=\theta+\tilde{V}(t+\Delta)-\nu\mathring{V}(t+\Delta)$ in to the above equation,
-\begin{equation*}
+%  -\frac{Ab^2a}{1-2Aa}=-\frac{1}{\nu}\frac{[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]m}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
+%Substituting $m=\theta+\tilde{V}(t+\Delta)-\nu\mathring{V}(t+\Delta)$ in to the above equation,
 \begin{split}
-  -\frac{Ab^2a}{1-2Aa}=&-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  -\frac{Ab^2a}{1-2Aa}=&-\frac{1}{\nu}\frac{\tilde{A}\tilde{a}\tilde{b^2}}{1-2\nu\tilde{A}\tilde{a}}\\
+  =&-\frac{1}{\nu}\frac{[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]m}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+  =&-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
   &+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
   &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
 \end{split}
@@ -466,20 +476,22 @@ Therefore,
   \begin{split}
     &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
     =&-\frac{Ab^2a}{1-2Aa}+\frac{1}{2}\ln(1-2Aa)-(K_1+\frac{1}{2}K_3)\hat{V}(t)+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
-    =&+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
-  &-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}(\theta+\tilde{V}(t)e^{-\kappa\Delta})[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}+\frac{\rho}{\nu}(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))
-  \end{split}
-\end{equation*}
-Rewrite the last term that contains $\frac{1}{\nu}$ in the above equation, we finally get
-\begin{align*}
-  &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
+    %=&+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+%  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+%  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
+%  &-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}(\theta+\tilde{V}(t)e^{-\kappa\Delta})[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}+\frac{\rho}{\nu}(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))
+%  \end{split}
+%\end{equation*}
+%Rewrite the last term that contains $\frac{1}{\nu}$ in the above equation, we finally get
+%\begin{align*}
+%  &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
   =&\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
   &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
   &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
   &+\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))\frac{\nu\tilde{b}^{-2}-2\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
-\end{align*}
+%\end{align*}
+\end{split}
+\end{equation*}
 For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without martingale correction.\\
 
 \section{Determining the Number of Samples Required to Meet a Specified Error Tolerance}
