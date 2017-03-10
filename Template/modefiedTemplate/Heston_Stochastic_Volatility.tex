@@ -611,17 +611,68 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 %\section{Footnotes}
 %Footnotes should be numbered sequentially in superscript Arabic numerals.\footnote{Footnotes should be typeset in 8~pt Times Roman at the bottom of the page.}
 
-%\appendix
+\appendix
 
-%\section{Appendices}
+\section{Appendices}
 
 %Appendices should be used only when absolutely necessary. They should come before Acknowledgments. If there is more than one appendix, number them alphabetically.  Number displayed equations occurring in the Appendix in this way, e.g.~(\ref{appeqn}), (A.2), etc.
 %\begin{equation}
 %f(j\delta, i\delta) \cong \frac{\pi}{M} \sum^M_{n-1}
 %Q_{\theta_n} (j\cos \theta_n + i\sin \theta_n)\, .\label{appeqn}
 %\end{equation}
-
-%\section*{Acknowledgments}
+\begin{align*}
+    \d V_t &= \kappa(\theta-V_t)\d t +\nu\sqrt{V_t}\d W_t\\
+    \d U_t &= -\kappa U_t\d t + \nu\sqrt{V_t}\d W_t\numberthis\label{appeqnV_t}\\
+\end{align*}
+\begin{equation*}
+  \d (V_t-U_t) = \kappa(\theta-(V_t-U_t))\d t
+\end{equation*}
+$Y_t=V_t-U_t$\\
+\begin{equation*}
+  \int_{\tau}^{\tau+\Delta}Y_t\d t = \int_{\tau}^{\tau+\Delta}(V_t-U_t)\d t = \Delta(\gamma_1Y_t+\gamma_2Y_{t+\Delta})
+\end{equation*}
+\begin{equation*}
+  \int_{\tau}^{\tau+\Delta}V_t\d t = \Delta(\gamma_1Y_t+\gamma_2Y_{t+\Delta})+\int_{\tau}^{\tau+\Delta}U_t\d t
+\end{equation*}
+Denote $f_t=e^{\kappa t}U_t$,
+\begin{equation*}
+  \begin{split}
+     \d f_t & = \kappa e^{\kappa t}U_t\d t + e^{\kappa t}\d U_t \\
+       & = \kappa e^{\kappa t}U_t \d t +e^{\kappa t}(-\kappa U_t\d t+\nu\sqrt{V_t}\d W_t) \\
+       &= \nu e^{\kappa t}\sqrt{V_t}\d W_t
+  \end{split}
+\end{equation*}
+\begin{align*}
+  f_t & = \nu\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s \\
+  U_t & = \nu e^{-\kappa t}\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s \\
+\end{align*}
+\begin{align*}
+  \int_{0}^{\Delta}U_t\d t & = \int_{0}^{\Delta}U_t\d (t+A) \\
+   & = U_t(t+A)|_0^{\Delta}-\int_{0}^{\Delta}(t+A)\d U_t \\
+   & = U_t(t+A)|_0^{\Delta}-\int_{0}^{\Delta}(t+A)(-\kappa U_t\d t +\nu\sqrt{V_t}\d W_t)
+\end{align*}
+Let $A=-\Delta\gamma_1$,
+\begin{align*}
+  \int_{0}^{\Delta}U_t\d t & = U_{\Delta}(\Delta-\Delta\gamma_1)-U_{0}(-\Delta\gamma_1)-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t\d t +\nu\sqrt{V_t}\d W_t \\
+   & = \Delta(\gamma_1U_0+\gamma_2 U_{\Delta})-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t-\int_{0}^{\Delta}(t-\Delta\gamma_1)\nu\sqrt{V_t}\d W_t
+\end{align*}
+\begin{align*}
+   \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \int_{0}^{\Delta}\frac{1}{2}(-\kappa U_t)\d (t-\Delta\gamma_1)^2\\
+   &= -\int_{0}^{\Delta}\kappa U_t\d \big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\\
+   &=-\big(\kappa U_{t}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\big|_0^{\Delta}\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t\\
+   &=-\big(\kappa U_{\Delta}\big(\frac{\Delta^2\gamma_2^2}{2}+B\big)-\big(\kappa U_{0}\big(\frac{\Delta^2\gamma_1^2}{2}+B\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t
+\end{align*}
+Let $B=-\frac{\Delta^2\gamma_1^2}{2}$,
+\begin{align*}
+   \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \kappa U_{\Delta}\big(\frac{\gamma_2^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_t\\
+   &=O(\nu\Delta^2)+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa \d U_t\\
+   &=O(\nu\Delta^2)+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa \d (-\kappa U_t\d t + \nu\sqrt{V_t}\d W_t)\\
+   &=O(\nu\Delta^2)-\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa^2U_t\d t+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa\nu\sqrt{V_t}\d W_t\\
+   &=O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\int_{0}^{\Delta}tU_t\d t\\
+   &\leq O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\sqrt{\int_{0}^{\Delta}t^2\d t\int_{0}^{\Delta}U_t^2\d t}\\
+   &=O(\nu\Delta^2)
+\end{align*}
+\section*{Acknowledgments}
 %This section should come before the References. Funding
 %information may also be included here.
 
