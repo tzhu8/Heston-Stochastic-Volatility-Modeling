@@ -627,12 +627,15 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 \begin{equation*}
   \d (V_t-U_t) = \kappa(\theta-(V_t-U_t))\d t
 \end{equation*}
-$Y_t=V_t-U_t$\\
+%$Y_t=V_t-U_t$\\
 \begin{equation*}
-  \int_{\tau}^{\tau+\Delta}Y_t\d t = \int_{\tau}^{\tau+\Delta}(V_t-U_t)\d t = \Delta(\gamma_1Y_t+\gamma_2Y_{t+\Delta})
+ \int_{\tau}^{\tau+\Delta}(V_t-U_t)\d t = \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
 \end{equation*}
 \begin{equation*}
-  \int_{\tau}^{\tau+\Delta}V_t\d t = \Delta(\gamma_1Y_t+\gamma_2Y_{t+\Delta})+\int_{\tau}^{\tau+\Delta}U_t\d t
+\begin{split}
+   \int_{\tau}^{\tau+\Delta}V_t\d t &= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})+\int_{\tau}^{\tau+\Delta}U_t\d t\\
+   &=\Delta(\gamma_1 V_t+(1-\gamma_1) V_{t+\Delta})-\bigg(\Delta(\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta})+\int_{\tau}^{\tau+\Delta}U_t\d t\bigg)
+\end{split}
 \end{equation*}
 Denote $f_t=e^{\kappa t}U_t$,
 \begin{equation*}
@@ -654,23 +657,34 @@ Denote $f_t=e^{\kappa t}U_t$,
 Let $A=-\Delta\gamma_1$,
 \begin{align*}
   \int_{0}^{\Delta}U_t\d t & = U_{\Delta}(\Delta-\Delta\gamma_1)-U_{0}(-\Delta\gamma_1)-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t\d t +\nu\sqrt{V_t}\d W_t \\
-   & = \Delta(\gamma_1U_0+\gamma_2 U_{\Delta})-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t-\int_{0}^{\Delta}(t-\Delta\gamma_1)\nu\sqrt{V_t}\d W_t
+   & = \Delta(\gamma_1U_0+(1-\gamma_1) U_{\Delta})-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t-\int_{0}^{\Delta}(t-\Delta\gamma_1)\nu\sqrt{V_t}\d W_t
 \end{align*}
 \begin{align*}
    \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \int_{0}^{\Delta}\frac{1}{2}(-\kappa U_t)\d (t-\Delta\gamma_1)^2\\
    &= -\int_{0}^{\Delta}\kappa U_t\d \big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\\
    &=-\big(\kappa U_{t}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\big|_0^{\Delta}\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t\\
-   &=-\big(\kappa U_{\Delta}\big(\frac{\Delta^2\gamma_2^2}{2}+B\big)-\big(\kappa U_{0}\big(\frac{\Delta^2\gamma_1^2}{2}+B\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t
+   &=-\big(\kappa U_{\Delta}\big(\frac{\Delta^2(1-\gamma_1)^2}{2}+B\big)-\big(\kappa U_{0}\big(\frac{\Delta^2\gamma_1^2}{2}+B\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t
 \end{align*}
 Let $B=-\frac{\Delta^2\gamma_1^2}{2}$,
 \begin{align*}
-   \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \kappa U_{\Delta}\big(\frac{\gamma_2^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_t\\
+   \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \kappa U_{\Delta}\big(\frac{(1-\gamma_1)^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_t\\
    &=O(\nu\Delta^2)+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa \d U_t\\
    &=O(\nu\Delta^2)+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa \d (-\kappa U_t\d t + \nu\sqrt{V_t}\d W_t)\\
    &=O(\nu\Delta^2)-\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa^2U_t\d t+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa\nu\sqrt{V_t}\d W_t\\
    &=O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\int_{0}^{\Delta}tU_t\d t\\
-   &\leq O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\sqrt{\int_{0}^{\Delta}t^2\d t\int_{0}^{\Delta}U_t^2\d t}\\
+   \text{by Holder Inequality} &\leq O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\sqrt{\int_{0}^{\Delta}t^2\d t\int_{0}^{\Delta}U_t^2\d t}\\
    &=O(\nu\Delta^2)
+\end{align*}
+Now we want to show Ito integral $I =\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa\nu\sqrt{V_t}\d W_t$ is of order $O(\nu\Delta^2)$.
+\begin{align*}
+ \mathbb{E}(I)&= 0\\
+  \text{Var}(I)&= \mathbb{E}(I^2) \\
+  \text{by Ito Isometry} &= \mathbb{E}\bigg(\int_{0}^{\Delta}(\frac{t^2-2\Delta\gamma_1t}{2})^2\kappa^2\nu^2 V_t\d t\bigg)\\
+  &=\int_{0}^{\Delta}(\frac{t^2-2\Delta\gamma_1t}{2})^2\kappa^2\nu^2 \mathbb{E}(V_t)\d t\\
+  &=\int_{0}^{\Delta}(\frac{t^2-2\Delta\gamma_1t}{2})^2\kappa^2\nu^2 (V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t}))\d t\\
+  &=\kappa^2\nu^2\int_{0}^{\Delta}\bigg[\int_{0}^{\Delta^5}\frac{1}{20} (V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t})) \d t^5\\
+  &-\int_{0}^{\Delta^4}\frac{1}{4}\Delta\gamma_1 (V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t}))\d t^4+\int_{0}^{\Delta^3}\frac{\Delta^2}{3}\gamma_1^2(V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t})) \d t^3\bigg]\\
+  &=\kappa^2\nu^2 \Delta^5(V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t}))(\frac{1}{20}-\frac{1}{4}\gamma_1+\frac{1}{3}\gamma_1^2)
 \end{align*}
 \section*{Acknowledgments}
 %This section should come before the References. Funding
