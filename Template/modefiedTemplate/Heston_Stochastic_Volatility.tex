@@ -57,7 +57,7 @@ Typeset similarly for keywords below.
 
 It is observed in the financial market that the volatility of asset prices may not be a constant. To have a more accurate pricing result, we need to implement an algorithm to simulate the volatility process. There are several well-known stochastic volatility models: the Hull-white model (1987), the Scott-Chesny model (1989), the Heston model (1993) and the SABR model (2002). We choose the Heston model as our approach since it is one of the most widely used stochastic volatility models. Upon solving the Heston model, the Quadratic Exponential (QE) scheme is used to simulate the volatility process and the Broadie-Kaya scheme is applied to the discretization of the asset price process.
 
-The QE model was developed by Andersen (2006). It is a market standard simulation method for the Heston model. Its attractiveness lies in its efficiency. It relies on simple probability density functions and needs a moderate amount of storage. Depending on the value of the volatility, the QE scheme approximates its distribution using either Gaussian or exponential distribution. After getting the value of the volatility for each time step, we discretize the asset price process. As we know, the computation of Broadie-Kaya algorithm is time consuming, but it is bias-free by construction. We discretize its scheme to get the simulation of the dynamic of asset price process. The Broadie-Kaya scheme does not satisfy an equivalent discrete-time martingale condition. The martingale property can be attained by adjusting a certain term in the scheme.
+The QE model was developed by \cite{Andersen2006}. It is a market standard simulation method for the Heston model. Its attractiveness lies in its efficiency. It relies on simple probability density functions and needs a moderate amount of storage. Depending on the value of the volatility, the QE scheme approximates its distribution using either Gaussian or exponential distribution. After getting the value of the volatility for each time step, we discretize the asset price process. As we know, the computation of Broadie-Kaya algorithm is time consuming, but it is bias-free by construction. We discretize its scheme to get the simulation of the dynamic of asset price process. The Broadie-Kaya scheme does not satisfy an equivalent discrete-time martingale condition. The martingale property can be attained by adjusting a certain term in the scheme.
 
 The GAIL is a suite of algorithms that includes Monte Carlo methods for multidimensional integration and computation of means, which is developed by Professor Hickernell and his collaborators. GAIL has theoretical guarantees that the user-defined error tolerance will be met. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class.
 
@@ -70,7 +70,7 @@ The setup of the paper is as follows: we first introduce Heston model, QE scheme
 Heston model is defined as
  \begin{align}
     \d X & =\mu X\,\d t+\sqrt{V}X\,\d W_1\label{eq1}\\
-    \d V &= -\kappa (\theta-V)\,\d t +\nu\sqrt{V}\,\d W_2\label{eq2}
+    \d V &= \kappa (\theta-V)\,\d t +\nu\sqrt{V}\,\d W_2\label{eq2}
   \end{align}
 
  The first equation simulates the asset price process and the second equation gives the evolution of the volatility process. $X$ denotes the asset price. $V$ is the stochastic volatility process.  Two standard Brownian motions, $\d W_1$ and $\d W_2$, are set with a correlation constant $\rho$. $\mu$, $\kappa$, $\theta$, $\nu$ are constant parameters $\mu$ is the risk-free interest rate. $\kappa$ is the speed of mean reversion. $\theta$ is the value of the long-term variance. $\nu$ is the volatility of volatility.
@@ -629,12 +629,12 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 \end{equation*}
 %$Y_t=V_t-U_t$\\
 \begin{equation*}
- \int_{\tau}^{\tau+\Delta}(V_t-U_t)\d t = \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
+ \int_{t}^{t+\Delta}(V_u-U_u)\d u = \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
 \end{equation*}
 \begin{equation*}
 \begin{split}
-   \int_{\tau}^{\tau+\Delta}V_t\d t &= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})+\int_{\tau}^{\tau+\Delta}U_t\d t\\
-   &=\Delta(\gamma_1 V_t+(1-\gamma_1) V_{t+\Delta})-\bigg(\Delta(\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta})+\int_{\tau}^{\tau+\Delta}U_t\d t\bigg)
+   \int_{t}^{t+\Delta}V_u\d u &= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})+\int_{t}^{t+\Delta}U_u\d u\\
+   &=\Delta(\gamma_1 V_t+(1-\gamma_1) V_{t+\Delta})-\bigg(\Delta(\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta})+\int_{t}^{t+\Delta}U_u\d u\bigg)
 \end{split}
 \end{equation*}
 Denote $f_t=e^{\kappa t}U_t$,
@@ -647,59 +647,66 @@ Denote $f_t=e^{\kappa t}U_t$,
 \end{equation*}
 \begin{align*}
   f_t & = \nu\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s \\
-  U_t & = \nu e^{-\kappa t}\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s \\
+  U_t & = \nu e^{-\kappa t}\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s
 \end{align*}
 \begin{align*}
-  \int_{0}^{\Delta}U_t\d t & = \int_{0}^{\Delta}U_t\d (t+A) \\
-   & = U_t(t+A)|_0^{\Delta}-\int_{0}^{\Delta}(t+A)\d U_t \\
-   & = U_t(t+A)|_0^{\Delta}-\int_{0}^{\Delta}(t+A)(-\kappa U_t\d t +\nu\sqrt{V_t}\d W_t)
+  \int_{t}^{t+\Delta}U_u\d u & = \int_{t}^{t+\Delta}U_u\d (u+A) \\
+   & = U_u(u+A)|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u+A)\d U_u \\
+   & = U_u(u+A)|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u+A)(-\kappa U_u\d u +\nu\sqrt{V_u}\d W_u)
 \end{align*}
-Let $A=-\Delta\gamma_1$,
+Let $A=-t-\Delta\gamma_1$,
 \begin{align*}
-  \int_{0}^{\Delta}U_t\d t & = U_{\Delta}(\Delta-\Delta\gamma_1)-U_{0}(-\Delta\gamma_1)-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t\d t +\nu\sqrt{V_t}\d W_t \\
-   & = \Delta(\gamma_1U_0+(1-\gamma_1) U_{\Delta})-\int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t-\int_{0}^{\Delta}(t-\Delta\gamma_1)\nu\sqrt{V_t}\d W_t
+  \int_{t}^{t+\Delta}U_u\d u & = U_{t+\Delta}(t+\Delta-t-\Delta\gamma_1)-U_{t}(-\Delta\gamma_1)-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u\\
+  & -\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u \\
+   & = \Delta(\gamma_1U_t+(1-\gamma_1) U_{t+\Delta})-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u
 \end{align*}
 \begin{align*}
-   \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \int_{0}^{\Delta}\frac{1}{2}(-\kappa U_t)\d (t-\Delta\gamma_1)^2\\
-   &= -\int_{0}^{\Delta}\kappa U_t\d \big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\\
-   &=-\big(\kappa U_{t}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\big|_0^{\Delta}\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t\\
-   &=-\big(\kappa U_{\Delta}\big(\frac{\Delta^2(1-\gamma_1)^2}{2}+B\big)-\big(\kappa U_{0}\big(\frac{\Delta^2\gamma_1^2}{2}+B\big)+\int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_t
+   \int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u & = \int_{t}^{t+\Delta}\frac{1}{2}(-\kappa U_u)\d (u-\Delta\gamma_1)^2\\
+   & = -\int_{t}^{t+\Delta}\kappa U_u\d \big(\frac{(u-t-\Delta\gamma_1)^2}{2}+B\big)\\
+   & = -\big(\kappa U_{u}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}+B\big)\big|_t^{t+\Delta}\big)+\int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}+B\big)\kappa \d U_u\\
+   & = -\kappa U_{t+\Delta}\big(\frac{\Delta^2(1-\gamma_1)^2}{2}+B\big)+\kappa U_{t}\big(\frac{\Delta^2\gamma_1^2}{2}+B\big)\\
+   & + \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}+B\big)\kappa\d U_u
 \end{align*}
 Let $B=-\frac{\Delta^2\gamma_1^2}{2}$,
 \begin{align*}
-   \int_{0}^{\Delta}(t-\Delta\gamma_1)(-\kappa U_t)\d t &= \kappa U_{\Delta}\big(\frac{(1-\gamma_1)^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{0}^{\Delta}\big(\frac{(t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_t\\
-   &=O(\nu\Delta^2)+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa \d U_t\\
-   &=O(\nu\Delta^2)+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa \d (-\kappa U_t\d t + \nu\sqrt{V_t}\d W_t)\\
-   &=O(\nu\Delta^2)-\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa^2U_t\d t+\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa\nu\sqrt{V_t}\d W_t\\
-   &=O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\int_{0}^{\Delta}tU_t\d t\\
-   \text{by Holder Inequality} &\leq O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\sqrt{\int_{0}^{\Delta}t^2\d t\int_{0}^{\Delta}U_t^2\d t}\\
-   &=O(\nu\Delta^2)
+   \int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u & = \kappa U_{t+\Delta}\big(\frac{(1-\gamma_1)^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_u\\
+   & = -\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma_1\bigg)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
+   & = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
+   & = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa \d (-\kappa U_u\d u + \nu\sqrt{V_u}\d W_u)\\
+   & = O(\nu\Delta^2)-\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa^2U_u\d u\\
+   & + \int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\nu\sqrt{V_u}\d W_u\\
+   & = O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\int_{t}^{t+\Delta}(u-t)U_u\d u\\
+   \text{by Holder Inequality} &\leq O(\nu\Delta^2)+\Delta\gamma_1\kappa^2\sqrt{\int_{t}^{t+\Delta}(u-t)^2\d u\int_{t}^{t+\Delta}U_u^2\d u}\\
+   & = O(\nu\Delta^2)
 \end{align*}
-Now we want to show Ito integral $I =\int_{0}^{\Delta}\frac{t^2-2\Delta\gamma_1t}{2}\kappa\nu\sqrt{V_t}\d W_t$ is of order $O(\nu\Delta^2)$.
+Now we want to show Ito integral $I =\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\big)\kappa\nu\sqrt{V_u}\d W_u$ is of order $O(\nu\Delta^2)$. By Theorem 4.7 of \cite{Klebaner2005}, $I$ is a continuous zero mean square integrable martingale.
 \begin{align*}
  \mathbb{E}(I)&= 0\\
   \text{Var}(I)&= \mathbb{E}(I^2) \\
-  \text{by Ito Isometry} &= \mathbb{E}\bigg(\int_{0}^{\Delta}(\frac{t^2-2\Delta\gamma_1t}{2})^2\kappa^2\nu^2 V_t\d t\bigg)\\
-  &=\int_{0}^{\Delta}(\frac{t^2-2\Delta\gamma_1t}{2})^2\kappa^2\nu^2 \mathbb{E}(V_t)\d t\\
-  &=\int_{0}^{\Delta}(\frac{t^2-2\Delta\gamma_1t}{2})^2\kappa^2\nu^2 (V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t}))\d t\\
-  &=\kappa^2\nu^2\int_{0}^{\Delta}\bigg[\int_{0}^{\Delta^5}\frac{1}{20} (V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t})) \d t^5\\
-  &-\int_{0}^{\Delta^4}\frac{1}{4}\Delta\gamma_1 (V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t}))\d t^4+\int_{0}^{\Delta^3}\frac{\Delta^2}{3}\gamma_1^2(V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t})) \d t^3\bigg]\\
-  &=\kappa^2\nu^2 \Delta^5(V_0 e^{-\kappa t}+\theta(1-e^{-\kappa t}))(\frac{1}{20}-\frac{1}{4}\gamma_1+\frac{1}{3}\gamma_1^2)
+  \text{by Ito Isometry} &= \mathbb{E}\bigg(\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2\nu^2 V_u\d u\bigg)\\
+  &=\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2\nu^2 \mathbb{E}(V_u)\d u\\
+  &=\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2\nu^2 (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u}))\d u\\
+  &=\kappa^2\nu^2\bigg[\int_{t}^{(t+\Delta)^5}\frac{1}{20} (V_0 e^{-\kappa (u-t)}e^{-\kappa t}+\theta(1-e^{-\kappa (u-t)}e^{-\kappa t})) \d (u-t)^5\\
+  &-\int_{t}^{(t+\Delta)^4}\frac{1}{4}\Delta\gamma_1 (V_0 e^{-\kappa (u-t)}e^{-\kappa t}+\theta(1-e^{-\kappa (u-t)}e^{-\kappa t}))\d (u-t)^4\\
+  &+\int_{t}^{(t+\Delta)^3}\frac{\Delta^2}{3}\gamma_1^2(V_0 e^{-\kappa (u-t)}e^{-\kappa t}+\theta(1-e^{-\kappa (u-t)}e^{-\kappa t})) \d(u-t)^3\bigg]\\
+  &=\kappa^2\nu^2 \Delta^5(V_0 e^{-\kappa \xi}+\theta(1-e^{-\kappa \xi}))(\frac{1}{20}-\frac{1}{4}\gamma_1+\frac{1}{3}\gamma_1^2)
 \end{align*}
+where $\xi\in[t,t+\Delta]$.
 \section*{Acknowledgments}
 %This section should come before the References. Funding
 %information may also be included here.
 
-\begin{thebibliography}{99}
-\bibitem{Andersen}Andersen, Leif B. G. (2006). Efficient Simulation of the Heston Stochastic Volatility Model.
-
-%\bibitem{}Imai, J and KS Tan (2006). A general dimension reduction technique for derivative pricing, {\it Journal of Computational Finance}, 10(2), 129-155.
-
-%\bibitem{} Joe, S and FY Kuo (2008). Constructing Sobol' sequences with better two-dimensional projection, {\it SIAM Journal on Scientific Computing}, 30(5), 2635-2654.
-
-%\bibitem{} L'Ecuyer, P and C Lemieux (2002). Recent advances in randomized quasi-Monte Carlo methods, in M Dror, P L'Ecuyer and F Szidarovszki (editors),{\it  Modeling Uncertainty: An Examination of Stochastic Theory, Methods, and Applications}, pp. 419-474, Kluwer Academic, Boston.
-
-\end{thebibliography}
-
+%\begin{thebibliography}{99}
+%\bibitem{Andersen}Andersen, Leif B. G. (2006). Efficient Simulation of the Heston Stochastic Volatility Model.
+%
+%%\bibitem{}Imai, J and KS Tan (2006). A general dimension reduction technique for derivative pricing, {\it Journal of Computational Finance}, 10(2), 129-155.
+%
+%%\bibitem{} Joe, S and FY Kuo (2008). Constructing Sobol' sequences with better two-dimensional projection, {\it SIAM Journal on Scientific Computing}, 30(5), 2635-2654.
+%
+%%\bibitem{} L'Ecuyer, P and C Lemieux (2002). Recent advances in randomized quasi-Monte Carlo methods, in M Dror, P L'Ecuyer and F Szidarovszki (editors),{\it  Modeling Uncertainty: An Examination of Stochastic Theory, Methods, and Applications}, pp. 419-474, Kluwer Academic, Boston.
+%
+%\end{thebibliography}
+\bibliographystyle{plainnat}
+\bibliography{Thebib}
 \end{document}
 
