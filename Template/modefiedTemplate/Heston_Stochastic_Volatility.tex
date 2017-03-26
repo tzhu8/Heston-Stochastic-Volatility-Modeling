@@ -55,13 +55,14 @@ Typeset similarly for keywords below.
 
 \section{Introduction}
 
-It is observed in the financial market that the volatility of asset prices may not be a constant. To have a more accurate pricing result, we need to implement an algorithm to simulate the volatility process. There are several well-known stochastic volatility models: the Hull-white model (1987), the Scott-Chesny model (1989), the Heston model (1993) and the SABR model (2002). We choose the Heston model as our approach since it is one of the most widely used stochastic volatility models. Upon solving the Heston model, the Quadratic Exponential (QE) scheme is used to simulate the volatility process and the Broadie-Kaya scheme is applied to the discretization of the asset price process.
+We observed that in the financial market the volatility of asset prices may not be a constant. To have a more accurate pricing result, we need to implement an algorithm to simulate the volatility process. There are several well-known stochastic volatility models: the Hull-white model (1987), the Scott-Chesny model (1989), the Heston model (1993) and the SABR model (2002). We choose the Heston model as our approach since it is one of the most widely used stochastic volatility models. Upon solving the Heston model, the Quadratic Exponential (QE) scheme is used to simulate the volatility process and the Broadie-Kaya scheme is applied to the discretization of the asset price process.
+
+However, the standard implementation gives inaccurate results when the volatility of the asset prices' volatility is set as zero. We identify this problem and fix it by a change of variables, which make it more accurate to calculate the Heston model. We compare the results with other simulation methods such as geometric Brownian motion and quasi-Monte Carlo, when setting the volatility of asset prices' volatility as zero, because in this case, the algorithm works like the one of asset price process with deterministic volatility. It shows that the new algorithm is accurate and fast. In addition, we implement the modified scheme in the Guaranteed Automatic Integration Library (GAIL) , which theoretically guarantees the result and stops algorithms automatically with user defined error tolerance . 
+
+The GAIL includes a suite of algorithms that applies the Monte Carlo methods for multidimensional integration and computation of means. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class.
+
 
 The QE model was developed by \cite{Andersen2006}. It is a market standard simulation method for the Heston model. Its attractiveness lies in its efficiency. It relies on simple probability density functions and needs a moderate amount of storage. Depending on the value of the volatility, the QE scheme approximates its distribution using either Gaussian or exponential distribution. After getting the value of the volatility for each time step, we discretize the asset price process. As we know, the computation of Broadie-Kaya algorithm is time consuming, but it is bias-free by construction. We discretize its scheme to get the simulation of the dynamic of asset price process. The Broadie-Kaya scheme does not satisfy an equivalent discrete-time martingale condition. The martingale property can be attained by adjusting a certain term in the scheme.
-
-The GAIL is a suite of algorithms that includes Monte Carlo methods for multidimensional integration and computation of means, which is developed by Professor Hickernell and his collaborators. GAIL has theoretical guarantees that the user-defined error tolerance will be met. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class.
-
-However, the standard implementation gives inaccurate results when the volatility of the asset prices' volatility is set as zero. We identify this problem and fix it by a change of variables, which make it more accurate to calculate the Heston model. We compare the results with other simulation methods such as geometric Brownian motion and quasi-Monte Carlo, when setting the volatility of asset prices' volatility as zero, because in this case, the algorithm works like the algorithm of asset price process with deterministic volatility. It shows that the new algorithm is accurate and fast. In addition, we implement the modified scheme in the Guaranteed Automatic Integration Library (GAIL) , which theoretically guarantees the result and stops algorithms automatically with user defined error tolerance . The GAIL includes a suite of algorithms that applies the Monte Carlo methods for multidimensional integration and computation of means, and is developed by Professor Hickernell and his collaborators. The financial application module of GAIL is under construction, and our work is aimed to add algorithms of calculating stochastic volatility model in the asset path class.
 
 The setup of the paper is as follows: we first introduce Heston model, QE scheme and the brief idea behind GAIL. Then, we explain our new algorithm and the improved algorithm using variance reduction techniques. At last, we show its performance in comparison with various widespread used schemes and with different variance reduction applications
 
@@ -627,9 +628,23 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 \begin{equation*}
   \d (V_t-U_t) = \kappa(\theta-(V_t-U_t))\d t
 \end{equation*}
-%$Y_t=V_t-U_t$\\
+$Y_t=V_t-U_t$
+
+\begin{align*}
+dY_t &=\kappa(\theta-Y_t)dt\\
+\frac{dY_t}{\theta-Y_t} &=\kappa dt\\
+-ln(\theta-Y_t) &=\kappa t+C_1\\
+Y_t &=\theta+Ce^{-\kappa t}\\
+\end{align*}
+
+\begin{align*}
+   \int^{t+\Delta}_t Y_udu & =\theta\Delta+C\int^{t+\Delta}_t e^{-\kappa u}du \\
+    & =\theta\Delta+\frac{Ce^{-\kappa t}-Ce^{-\kappa (t+\Delta)}}{\kappa}\\
+    &= \theta\Delta+\frac{V_t-V_{t+\Delta}}{\kappa}
+  \end{align*}
+$\theta=\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}$, then
 \begin{equation*}
- \int_{t}^{t+\Delta}(V_u-U_u)\d u = \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
+ \int_{t}^{t+\Delta}(V_u-U_u)\d u =\int^{t+\Delta}_t Y_udu= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
 \end{equation*}
 \begin{equation*}
 \begin{split}
