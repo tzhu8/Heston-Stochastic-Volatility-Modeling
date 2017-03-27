@@ -676,7 +676,7 @@ Now we start to working on the integral of $U$.
 %\end{align*}
 %Let $A=-t-\Delta\gamma_1$,
 %\begin{align*}
- % \int_{t}^{t+\Delta}U_u\d u 
+ % \int_{t}^{t+\Delta}U_u\d u
  %& = U_{t+\Delta}(t+\Delta-t-\Delta\gamma_1)-U_{t}(-\Delta\gamma_1)-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u\\
  % & -\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u \\
    & = \Delta(\gamma_1U_t+(1-\gamma_1) U_{t+\Delta})-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u\\
@@ -692,7 +692,7 @@ For the second term of Equation \ref{appeqnU_t},
 %\end{align*}
 %Let $B=-\frac{\Delta^2\gamma_1^2}{2}$,
 %\begin{align*}
-   %\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u 
+   %\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u
    & = \kappa U_{t+\Delta}\big(\frac{(1-\gamma_1)^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_u\\
    & = -\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma_1\bigg)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
    %& = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
@@ -707,7 +707,7 @@ By Holder inequality
    & = O(\nu\Delta^2)
 \end{align*}
 Likewise, integral $ \int_{t}^{t+\Delta}\frac{(u-t)^2}{2}\kappa^2U_u\d u$ is also of order $O(\nu\Delta^2)$.
-Now we want to show that for Ito integral $I =\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\big)\kappa\nu\sqrt{V_u}\d W_u$. By Theorem 4.7 of \cite{Klebaner2005}, $I$ is a continuous zero mean square integrable martingale.
+Now we want to show that for Ito integral $I =\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\big)\kappa\nu\sqrt{V_u}\d W_u$. By Theorem 4.7 of \cite{Klebaner2005}, $I$ is a continuous zero mean square integrable martingale.  Since $V_t$ is a Cox-Ingersoll-Ross process, we know its expectation given $V_0$ is $\mathbb{E}(V_t)=V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})$.
 \begin{align*}
  \mathbb{E}(I)&= 0\\
   \text{Var}(I)&= \mathbb{E}(I^2) \\
