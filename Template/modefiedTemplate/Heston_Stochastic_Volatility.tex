@@ -15,6 +15,7 @@
 \input{headingsIgor}
 
 \usepackage{graphicx}
+\usepackage{cleveref}
 \graphicspath{ {graphs/} }
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
@@ -88,7 +89,7 @@ Heston model is defined as
 %   & \nu \text{ is the volatility of volatility.}
 %\end{align*}
 
-Applying the Ito's formula to \eqref{eq1}, an equivalent form to simulate the process of asset price is shown in \eqref{logX}.
+Applying the Ito's formula to Eq.\eqref{eq1}, an equivalent form to simulate the process of asset price is shown in Eq.\eqref{logX}.
 \begin{equation}\label{logX}
   \d\ln(X)=(\mu-\frac{V}{2})\,\d t+\sqrt{V}\,\d W_1
 \end{equation}
@@ -135,7 +136,7 @@ b^2=2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0, \qquad a =\frac{m}{
 
 \subsection{Broadie-Kaya Discretization Scheme for the Asset Prices}
 
-We used the Broadie-Kaya scheme to simulate the asset price process. We give a brief derivation of this scheme here. Details are illustrated in Andersen (2006) \cite{Andersen}.
+We used the Broadie-Kaya scheme to simulate the asset price process. We give a brief derivation of this scheme here. Details are illustrated in \cite{Andersen2006}.
 
 First we integrate the SDE for $V(t)$ to have a bias-free scheme,
 \begin{equation*}
@@ -145,7 +146,7 @@ and it can be written as
 \begin{equation}\label{dW_V}
 \int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W_V(u)=\nu^{-1}\bigg(V(t+\Delta)- V(t)-\int_{t}^{t+\Delta}\kappa(\theta-V(u))\,\d u\bigg)
 \end{equation}
-Recall \eqref{logX}, by Cholesky decomposition, we have
+Recall Eq.\eqref{logX}, by Cholesky decomposition, we have
 \begin{equation*}
  \d \ln X(t)=(\mu-\frac{1}{2}V(t))\,\d t +\sqrt{V(t)}\big(\rho\,\d W_V(t)+\sqrt{1-\rho^2}\,\d W(t)\big)
 \end{equation*}
@@ -271,12 +272,13 @@ Combine with $V(t)-\theta= Ce^{-\kappa t}$, we have the expression of $\theta$ a
 %  \end{split}
 \theta=\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}
 \end{equation*}
-Substitute the expression of $\theta$ into equation \eqref{int V}, we get
+Substitute the expression of $\theta$ into Eq.\eqref{int V}, we get
 \begin{equation*}
   \begin{split}
     \int_{t}^{t+\Delta}V(u)\d u &= \frac{V(t)-V(t+\Delta)}{\kappa}+\Delta\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}  \\
     &=\frac{V(t)(1-e^{\kappa\Delta}+\kappa\Delta)-V(t+\Delta)(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{\kappa(1-e^{\kappa\Delta})} \\
-     &=\Delta[\gamma_1 V(t)+\gamma_2 V(t+\Delta)]
+     %&=\Delta[\gamma_1 V(t)+\gamma_2 V(t+\Delta)]
+     &=\Delta[\gamma V(t)+(1-\gamma) V(t+\Delta)]
   \end{split}
 \end{equation*}
 where
@@ -284,15 +286,23 @@ where
 %  \gamma_1 &= \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})} &
 %  \gamma_2 &= -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}
 %\end{align*}
-$\gamma_1 = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})}$,
-$\gamma_2 = -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}$.
-We know $\gamma_1\geq 0$ and $\gamma_2\geq 0$.\\
-As $\kappa\Delta\rightarrow 0$, \begin{align*}
- \gamma_1 &\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} \\
-  \gamma_2 &\rightarrow\frac{-(1+\kappa\Delta+\frac{1}{2}(\kappa\Delta)^2)(1-\kappa\Delta)+1}{\kappa\Delta(\kappa\Delta)}
-  \rightarrow\frac{-(1-(\kappa\Delta)^2)-\frac{1}{2}(\kappa\Delta)^2+\frac{1}{2}(\kappa\Delta)^3+1}{(\kappa\Delta)^2}\rightarrow\frac{1}{2}
-\end{align*}
-When $\kappa\Delta$ goes to zero, our scheme just like the Euler scheme.
+%$\gamma_1 =
+$\gamma = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})}$,
+%$\gamma_2 = -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}$.
+%We know $\gamma_1\geq 0$ and $\gamma_2\geq 0$.\\
+$\gamma\geq 0$.
+As $\kappa\Delta\rightarrow 0$, $\gamma\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} $.\\
+%\begin{align*}
+% \gamma_1 &\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} \\
+%  \gamma_2 &\rightarrow\frac{-(1+\kappa\Delta+\frac{1}{2}(\kappa\Delta)^2)(1-\kappa\Delta)+1}{\kappa\Delta(\kappa\Delta)}
+%  \rightarrow\frac{-(1-(\kappa\Delta)^2)-\frac{1}{2}(\kappa\Delta)^2+\frac{1}{2}(\kappa\Delta)^3+1}{(\kappa\Delta)^2}\rightarrow\frac{1}{2}
+%\end{align*}
+When $\kappa\Delta$ goes to zero, our scheme just like the Euler scheme.\\
+For $\nu\neq 0$, we approximate the integral $\int_{t}^{t+\Delta}V(u)\d u$ as follow:
+\begin{equation*}
+  \int_{t}^{t+\Delta}V(u)\d u = \Delta[\gamma V(t)+(1-\gamma) V(t+\Delta)] + O(\nu\Delta^{1.5}).
+\end{equation*}
+See the proof of the error order of this approximation in ~\ref{sec:AppendixA}.
 \subsubsection{Change of variables}
 We want to do change of variable of $s^2, m, \psi, b^{-2}, a, b, K_0,K_1,K_2, K_3,$ and $ K_4$ in a way that $\nu$ becomes multiplier rather than divisor.\\
 For parameters in QE scheme, we do change of variables. As we see, new variables $\tilde{s}^2, \tilde{m}$ and $\tilde{\psi}$ are free of $\nu$.
@@ -304,17 +314,16 @@ For parameters in QE scheme, we do change of variables. As we see, new variables
 %  a&=\tilde{a}\nu^2, & \tilde{a}&=\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}
 %\end{align*}
 \begin{align*}
-s^2&=\nu^2\tilde{s}^2={\nu}^2\bigg(\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2\bigg),
+s^2&=\nu^2\tilde{s}^2={\nu}^2\bigg(\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}\big(1-e^{-\kappa\Delta}\big)+\frac{\theta}{2\kappa}\big(1-e^{-\kappa\Delta}\big)^2\bigg),
 \quad m=\tilde{m}=\theta + \hat{V}(t)e^{-\kappa\Delta}, \\
-  \psi&=\nu^2\tilde{\psi}=\nu^2\bigg(\frac{\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}(1-e^{-\kappa\Delta})+\frac{\theta}{2\kappa}(1-e^{-\kappa\Delta})^2}{(\theta+(\hat{V}(t)-\theta)e^{-\kappa\Delta})^2}\bigg),\\
+  \psi&=\nu^2\tilde{\psi}=\nu^2\bigg[\frac{\frac{\hat{V}(t)e^{-\kappa\Delta}}{\kappa}(1-e^{-\kappa\Delta})+\frac{\theta}{2\kappa}(1-e^{-\kappa\Delta})^2}{\big(\theta+(\hat{V}(t)-\theta)e^{-\kappa\Delta}\big)^2}\bigg],\\
 b^{-2}&=\nu^2\tilde{b}^{-2}=\nu^2\frac{\tilde{\psi}}{2\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg(1+\sqrt{1-\frac{\tilde{\psi}\nu^2}{2}}\bigg)} ,\quad
 a=\nu^2\tilde{a}=\nu^2\frac{m\tilde{b}^{-2}}{1+\nu^2\tilde{b}^{-2}}.
 \end{align*}
 Similarly, for parameters in Broadie-Kaya discretization scheme, we have
 \begin{align*}
-   K_0&=\frac{1}{\nu}\tilde{K}_0 =\frac{1}{\nu}(-\rho\kappa\theta\Delta),&   K_1&=\frac{1}{\nu}\tilde{K_1}=\frac{1}{\nu}\bigg[\rho[\kappa\gamma_1\Delta-1]-\frac{\nu\gamma_1\Delta}{2}\bigg],
-&  K_2&=\frac{1}{\nu}\tilde{K_2}=\frac{1}{\nu}\bigg[\rho[\kappa\gamma_2\Delta-1]-\frac{\nu\gamma_2\Delta}{2}\bigg],\\
-   K_3&=\tilde{K}_3=\gamma_1\Delta(1-\rho^2), & K_4&=\tilde{K}_4=\gamma_2\Delta(1-\rho^2).
+   K_0&=\frac{1}{\nu}\tilde{K}_0 =\frac{1}{\nu}(-\rho\kappa\theta\Delta),&   K_1&=\frac{1}{\nu}\tilde{K_1}=\frac{1}{\nu}\bigg[\rho(\kappa\gamma\Delta-1)-\frac{\nu\gamma\Delta}{2}\bigg],\\  K_2&=\frac{1}{\nu}\tilde{K_2}=\frac{1}{\nu}\bigg[\rho\big(\kappa(1-\gamma)\Delta-1\big)-\frac{\nu(1-\gamma)\Delta}{2}\bigg], &
+   K_3&=\tilde{K}_3=\gamma\Delta(1-\rho^2),\\ K_4&=\tilde{K}_4=(1-\gamma)\Delta(1-\rho^2).
 \end{align*}
 %\subsubsection{Change of variables for calculating $\hat{X}$}
 %For Eq.\eqref{eq2}, set $\nu=0$, we have
@@ -361,10 +370,10 @@ Define $\nu \mathring{V}(t+\Delta)=\tilde{V}(t+\Delta)-\tilde{V}(t)e^{-\kappa\De
 In order to calculate $\text{ln}\hat{X}$,we do the following calculation first.\\
 \begin{equation*}
 \begin{split}
-&\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta)
+&\gamma\tilde{V}(t)+(1-\gamma)\tilde{V}(t+\Delta)
 %=& (\gamma_1+\gamma_2e^{-\kappa\Delta})\tilde{V}(t)+\gamma_2\nu\mathring{V}(t+\Delta)\\
 =%&
-\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu\mathring{V}(t+\Delta).\\
+\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+(1-\gamma)\nu\mathring{V}(t+\Delta).\\
 \end{split}
 \end{equation*}
 Substituting the above equation into the following equations, we get
@@ -377,9 +386,9 @@ Substituting the above equation into the following equations, we get
 %=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}[(-1+\kappa\Delta\gamma_1)\tilde{V}(t)+(1+\kappa\Delta\gamma_2)\tilde{V}(t+\Delta)]\\
 %=&\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}\bigg[\frac{\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\tilde{V}(t+\Delta)-\frac{\kappa\Delta}{e^{\kappa\Delta}-1}\tilde{V}(t)\bigg]\\
 %=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho}{\nu}\frac{\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}(\tilde{V}(t+\Delta)-\tilde{V}(t)e^{-\kappa\Delta})\\
-=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\mathring{V}(t+\Delta)\\
+=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}\big[\gamma\tilde{V}(t)+(1-\gamma)\tilde{V}(t+\Delta)\big]+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\mathring{V}(t+\Delta)\\
 %=&-\theta\frac{\Delta}{2}-\frac{\Delta}{2}\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu\mathring{V}(t+\Delta)\bigg)+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{e^{\kappa\Delta}-1}\mathring{V}(t+\Delta)\\
-=&-\theta\frac{\Delta}{2}-\frac{1-e^{-\kappa\Delta}}{2\kappa}\tilde{V}(t)-\bigg(\frac{\nu(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{2\kappa(1-e^{\kappa\Delta})}+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{1-e^{\kappa\Delta}}\bigg)\mathring{V}(t+\Delta)
+=&-\theta\frac{\Delta}{2}-\frac{1-e^{-\kappa\Delta}}{2\kappa}\tilde{V}(t)-\bigg[\frac{\nu(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{2\kappa(1-e^{\kappa\Delta})}+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{1-e^{\kappa\Delta}}\bigg]\mathring{V}(t+\Delta)
 \end{split}
 \end{equation}
 %Define $\tilde{V}(t)=\hat{V}(t)-\theta$. \\
@@ -397,9 +406,9 @@ Moreover,
 &K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)\\
 %=&\gamma_1\Delta(1-\rho^2)\hat{V}(t)+\gamma_2\Delta(1-\rho^2)\hat{V}(t+\Delta)\\
 %=&\Delta(1-\rho^2)[\gamma_1(\theta+\tilde{V}(t))+\gamma_2(\theta+\tilde{V}(t+\Delta))]\\
-=&\Delta(1-\rho^2)[\theta+(\gamma_1\tilde{V}(t)+\gamma_2\tilde{V}(t+\Delta))]\\
+=&\Delta(1-\rho^2)\big[\theta+\big(\gamma\tilde{V}(t)+(1-\gamma)\tilde{V}(t+\Delta)\big)\big]\\
 %=&\Delta(1-\rho^2)\big[\theta+\big((\gamma_1+\gamma_2e^{-\kappa\Delta})\tilde{V}(t)+\gamma_2\nu \mathring{V}(t+\Delta)\big)\big]\\
-=&\Delta(1-\rho^2)\bigg[\theta+\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu \mathring{V}(t+\Delta)\bigg)\bigg]\numberthis\label{QEK3K4}
+=&\Delta(1-\rho^2)\bigg[\theta+\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+(1-\gamma)\nu \mathring{V}(t+\Delta)\bigg)\bigg]\numberthis\label{QEK3K4}
 \end{align*}
 \\
 Now we can rewrite the discretization scheme.
@@ -407,7 +416,7 @@ For $X$ when $\nu^2\tilde{\psi} \leq \psi_C $:
 \begin{equation}\label{newLnX}
 \begin{split}
   \ln\hat{X}(t+\Delta)=&\ln\hat{X}(t)-\theta\frac{\Delta}{2}-\frac{1-e^{-\kappa\Delta}}{2\kappa}\tilde{V}(t)-\bigg(\frac{\nu(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{2\kappa(1-e^{\kappa\Delta})}+\frac{\rho\kappa\Delta e^{\kappa\Delta}}{1-e^{\kappa\Delta}}\bigg)\mathring{V}(t+\Delta)\\
-  &+\sqrt{\Delta(1-\rho^2)\bigg[\theta+\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+\gamma_2\nu \mathring{V}(t+\Delta)\bigg)\bigg]}\cdot Z
+  &+\sqrt{\Delta(1-\rho^2)\bigg[\theta+\bigg(\frac{1-e^{-\kappa\Delta}}{\kappa\Delta}\tilde{V}(t)+(1-\gamma)\nu \mathring{V}(t+\Delta)\bigg)\bigg]}\cdot Z
 \end{split}
 \end{equation}
 For $X$ when $\nu^2\tilde{\psi} > \psi_C $:
@@ -465,10 +474,10 @@ Rewrite the first part of $K_0^*$ in terms of new parameters we defined and subs
 %Substituting $m=\theta+\tilde{V}(t+\Delta)-\nu\mathring{V}(t+\Delta)$ in to the above equation,
 \begin{split}
   -\frac{Ab^2a}{1-2Aa}=&-\frac{1}{\nu}\frac{\tilde{A}\tilde{a}\tilde{b^2}}{1-2\nu\tilde{A}\tilde{a}}\\
-  =&-\frac{1}{\nu}\frac{[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]m}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  =&-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  &+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
+  =&-\frac{1}{\nu}\frac{\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]m}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}\\
+  =&-\frac{1}{\nu}\frac{\rho\big((1-\gamma)\Delta\kappa+1\big)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}\\
+  &+\frac{\frac{1}{2}(1-\gamma)\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}\\
+  &+\frac{\mathring{V}(t+\Delta)\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}
 \end{split}
 \end{equation*}
 Therefore,
@@ -476,7 +485,7 @@ Therefore,
   \begin{split}
     &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
     =&-\frac{Ab^2a}{1-2Aa}+\frac{1}{2}\ln(1-2Aa)-(K_1+\frac{1}{2}K_3)\hat{V}(t)+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
-    %=&+\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
+    %=&+\frac{\frac{1}{2}(1-\gamma)\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho((1-\gamma)\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
 %  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
 %  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
 %  &-\frac{1}{\nu}\frac{\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}(\theta+\tilde{V}(t)e^{-\kappa\Delta})[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}+\frac{\rho}{\nu}(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))
@@ -485,10 +494,10 @@ Therefore,
 %Rewrite the last term that contains $\frac{1}{\nu}$ in the above equation, we finally get
 %\begin{align*}
 %  &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
-  =&\frac{\frac{1}{2}\gamma_2\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  &+\frac{\mathring{V}(t+\Delta)[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}\\
-  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}\gamma_2\Delta(\theta+\tilde{V}(t+\Delta))\\
-  &+\rho(\gamma_2\Delta\kappa+1)(\theta+\tilde{V}(t+\Delta))\frac{\nu\tilde{b}^{-2}-2\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m[\rho(\gamma_2\Delta\kappa+1)-\frac{1}{2}\gamma_2\Delta\nu\rho^2]}
+  =&\frac{\frac{1}{2}(1-\gamma)\Delta\rho^2(\theta+\tilde{V}(t+\Delta))}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}\\
+  &+\frac{\mathring{V}(t+\Delta)\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}\\
+  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}(t))-\frac{1}{2}(1-\gamma)\Delta(\theta+\tilde{V}(t+\Delta))\\
+  &+\rho\big((1-\gamma)\Delta\kappa+1\big)(\theta+\tilde{V}(t+\Delta))\frac{\nu\tilde{b}^{-2}-2\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}
 %\end{align*}
 \end{split}
 \end{equation*}
@@ -615,115 +624,133 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 \appendix
 
 \section{Appendices}
-
+\label{sec:AppendixA}
 %Appendices should be used only when absolutely necessary. They should come before Acknowledgments. If there is more than one appendix, number them alphabetically.  Number displayed equations occurring in the Appendix in this way, e.g.~(\ref{appeqn}), (A.2), etc.
 %\begin{equation}
 %f(j\delta, i\delta) \cong \frac{\pi}{M} \sum^M_{n-1}
 %Q_{\theta_n} (j\cos \theta_n + i\sin \theta_n)\, .\label{appeqn}
 %\end{equation}
-\begin{align*}
-    \d V_t &= \kappa(\theta-V_t)\d t +\nu\sqrt{V_t}\d W_t\\
-    \d U_t &= -\kappa U_t\d t + \nu\sqrt{V_t}\d W_t\numberthis\label{appeqnV_t}\\
-\end{align*}
-For initial conditions, $V_0$ is given, $U_0 = 0$.
+Recall the process 
 \begin{equation*}
-  \d (V_t-U_t) = \kappa(\theta-(V_t-U_t))\d t
+  \d V_t = \kappa(\theta-V_t)\d t +\nu\sqrt{V_t}\d W_t\text{,} \quad V_0 \text{ given}
 \end{equation*}
-Denote $Y_t=V_t-U_t$, then we have the stochastic process $Y_t$ has the same expression as $V_t$ when $\nu = 0$. Also, the initial condition of $Y_t$ is $Y_0 = V_0$. So, we apply similar deduction to $Y_t$ as in Section 3.1.1.
+defined at the beginning of Chapter 2.\\ 
+Let $U_t$ satisfy 
+\begin{equation*}
+  \d U_t = -\kappa U_t\d t + \nu\sqrt{V_t}\d W_t\text{,} \quad U_0 = 0.\numberthis\label{appeqnV_t}
+\end{equation*}
+Let $Y_t=V_t-U_t$ and note that $Y_t$ satisfies a deterministic equation
+\begin{equation*}
+  %\d (V_t-U_t) = \kappa(\theta-(V_t-U_t))\d t .
+  \d Y_t = \kappa(\theta-Y_t)\d t, \quad Y_0 = V_0.
+\end{equation*}
+Moreover, $Y_t=V_t$ when $\nu = 0$. So, we apply similar deduction to $Y_t$ as in Section 3.1.1.
 \begin{align*}
-\d Y_t &=\kappa(\theta-Y_t)\d t\\
-\frac{\d Y_t}{\theta-Y_t} &=\kappa \d t\\
-%-\ln(\theta-Y_t) &=\kappa t+C_1\\
-Y_t &=\theta+Ce^{-\kappa t}\\
+%\d Y_t &=\kappa(\theta-Y_t)\d t\\
+%\frac{\d Y_t}{\theta-Y_t} &=\kappa \d t\\
+%%-\ln(\theta-Y_t) &=\kappa t+C_1\\
+Y_t &=\theta+(Y_0-\theta)e^{-\kappa t}\\
+Y_{t+\Delta} &=\theta+(Y_0-\theta)e^{-\kappa (t+\Delta)}
 \end{align*}
-where $C = Y_0-\theta$.
+From the result in Section 3.1.1, $\theta=\frac{Y_t-e^{\kappa\Delta}Y_{t+\Delta}}{1-e^{\kappa\Delta}}$.
 \begin{align*}
-   \int^{t+\Delta}_t Y_u\d u & =\theta\Delta+C\int^{t+\Delta}_t e^{-\kappa u}\d u \\
-    & =\theta\Delta+\frac{Ce^{-\kappa t}-Ce^{-\kappa (t+\Delta)}}{\kappa}\\
-    &= \theta\Delta+\frac{Y_t-Y_{t+\Delta}}{\kappa}
+   \int^{t+\Delta}_t Y_u\d u %& =\theta\Delta+(Y_0-\theta)\int^{t+\Delta}_t e^{-\kappa u}\d u \\
+    & =\theta\Delta+\frac{(Y_0-\theta)e^{-\kappa t}-(Y_0-\theta)e^{-\kappa (t+\Delta)}}{\kappa}\\
+    &= \Delta[\gamma Y_t+(1-\gamma)Y_{t+\Delta}]
   \end{align*}
-From the result in Section 3.1.1, the $\theta$ has an expression as $\theta=\frac{Y(t)-e^{\kappa\Delta}Y(t+\Delta)}{1-e^{\kappa\Delta}}$, then
-\begin{equation*}
- \int_{t}^{t+\Delta}(V_u-U_u)\d u =\int^{t+\Delta}_t Y_u\d u= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
-\end{equation*}
-where $\gamma_1$ and $\gamma_2$ are the same as in Section 3.1.1.\\
+for $\gamma = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})}$.\\
+%\begin{equation*}
+% \int_{t}^{t+\Delta}(V_u-U_u)\d u =\int^{t+\Delta}_t Y_u\d u= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
+%\end{equation*}
+%where $\gamma_1$ and $(1-\gamma)$ are the same as in Section 3.1.1.\\
 Now we have the integral of $V_t$ written in terms of $V$ and $U$ as follows.
 \begin{equation*}
 \begin{split}
-   \int_{t}^{t+\Delta}V_u\d u &= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})+\int_{t}^{t+\Delta}U_u\d u\\
-   &=\Delta(\gamma_1 V_t+(1-\gamma_1) V_{t+\Delta})-\bigg(\Delta(\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta})+\int_{t}^{t+\Delta}U_u\d u\bigg)
+   \int_{t}^{t+\Delta}V_u\d u &= \int_{t}^{t+\Delta}(Y_u+U_u)\d u\\ &=\Delta(\gamma Y_t+(1-\gamma )Y_{t+\Delta})+\int_{t}^{t+\Delta}U_u\d u\\
+   &=\Delta(\gamma  V_t+(1-\gamma ) V_{t+\Delta})-\bigg(\Delta(\gamma  U_t+(1-\gamma ) U_{t+\Delta})-\int_{t}^{t+\Delta}U_u\d u\bigg)
 \end{split}
 \end{equation*}
 Our problem becomes to show that the approximation $\Delta(\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta})$ of $\int_{t}^{t+\Delta}U_u\d u$ is of order $o(\nu\Delta)$.\\
-First, we solve for $U_t$.
-\begin{equation*}
-  \begin{split}
-     \d e^{\kappa t}U_t & = \kappa e^{\kappa t}U_t\d t + e^{\kappa t}\d U_t \\
-       & = \kappa e^{\kappa t}U_t \d t +e^{\kappa t}(-\kappa U_t\d t+\nu\sqrt{V_t}\d W_t) \\
-       &= \nu e^{\kappa t}\sqrt{V_t}\d W_t
-  \end{split}
-\end{equation*}
-Integrate on both sides,
+First, we can write the solution of $U_t$ as
+%\begin{equation*}
+%  \begin{split}
+%     \d e^{\kappa t}U_t & = \kappa e^{\kappa t}U_t\d t + e^{\kappa t}\d U_t \\
+%       & = \kappa e^{\kappa t}U_t \d t +e^{\kappa t}(-\kappa U_t\d t+\nu\sqrt{V_t}\d W_t) \\
+%       &= \nu e^{\kappa t}\sqrt{V_t}\d W_t
+%  \end{split}
+%\end{equation*}
+%Integrate on both sides,
 \begin{align*}
   %f_t & = \nu\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s \\
-  U_t & = \nu e^{-\kappa t}\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s
+  U_t & = \nu e^{-\kappa t}\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\d W_s.
 \end{align*}
-Now we start to working on the integral of $U$.
+Now we start to working on the integral of $U_t$.
 \begin{align*}
-  \int_{t}^{t+\Delta}U_u\d u & = \int_{t}^{t+\Delta}U_u\d (u-t-\Delta\gamma_1) \\
-   & = U_u(u-t-\Delta\gamma_1)|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\d U_u \\
-   & = U_u(u-t-\Delta\gamma_1)|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u\d u +\nu\sqrt{V_u}\d W_u)\\
+  \int_{t}^{t+\Delta}U_u\d u %& = \int_{t}^{t+\Delta}U_u\d (u-t-\Delta\gamma_1) \\
+   & = U_u(u-t-\Delta\gamma)\big|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u-t-\Delta\gamma)\d U_u \\
+   %& = U_u(u-t-\Delta\gamma_1)|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u\d u +\nu\sqrt{V_u}\d W_u)\\
 %\end{align*}
 %Let $A=-t-\Delta\gamma_1$,
 %\begin{align*}
  % \int_{t}^{t+\Delta}U_u\d u
  %& = U_{t+\Delta}(t+\Delta-t-\Delta\gamma_1)-U_{t}(-\Delta\gamma_1)-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u\\
  % & -\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u \\
-   & = \Delta(\gamma_1U_t+(1-\gamma_1) U_{t+\Delta})-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u\\
-   &-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u\numberthis\label{appeqnU_t}
+   & = \Delta\big(\gamma U_t+(1-\gamma ) U_{t+\Delta}\big)+\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\kappa U_u\d u\\
+   &-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\d W_u\\%\numberthis\label{appeqnU_t}
+   & = \Delta\big(\gamma U_t+(1-\gamma ) U_{t+\Delta}\big)+\int_{t}^{t+\Delta}\kappa U_u\d \big(\frac{(u-t-\Delta\gamma )^2}{2}-\frac{\Delta^2\gamma ^2}{2}\big)\\
+   &-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\d W_u\\
+   & = \Delta\big(\gamma U_t+(1-\gamma ) U_{t+\Delta}\big)+\kappa U_{u}\big(\frac{(u-t-\Delta\gamma )^2}{2}-\frac{\Delta^2\gamma ^2}{2}\big)\bigg|_t^{t+\Delta}\\
+   &- \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma )^2}{2}-\frac{\Delta^2\gamma ^2}{2}\big)\kappa \d U_u-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\d W_u\\
+   & = \Delta\big(\gamma U_t+(1-\gamma ) U_{t+\Delta}\big)+\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma \bigg)\\
+   &+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)\kappa^2U_u\d u- \nu\int_{t}^{t+\Delta}h(u)\sqrt{V_u}\d W_u\numberthis\label{appeqnU_t}\\
 \end{align*}
-For the second term of Equation \ref{appeqnU_t},
-\begin{align*}
-   \int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u & = \int_{t}^{t+\Delta}\frac{1}{2}(-\kappa U_u)\d (u-t-\Delta\gamma_1)^2\\
-   & = -\int_{t}^{t+\Delta}\kappa U_u\d \big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\\
-   & = -\kappa U_{u}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\big|_t^{t+\Delta}+\int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_u\\
-   %& = -\kappa U_{t+\Delta}\big(\frac{\Delta^2(1-\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)+\kappa U_{t}\big(\frac{\Delta^2\gamma_1^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\\
-   %& + \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa\d U_u\\
-%\end{align*}
-%Let $B=-\frac{\Delta^2\gamma_1^2}{2}$,
+where $h(u) =\kappa\big(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \big)+(u-t-\Delta\gamma )$.\\
 %\begin{align*}
-   %\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u
-   & = \kappa U_{t+\Delta}\big(\frac{(1-\gamma_1)^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_u\\
-   & = -\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma_1\bigg)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
-   %& = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
-   & = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa \d (-\kappa U_u\d u + \nu\sqrt{V_u}\d W_u)\\
-   & = O(\nu\Delta^2)-\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa^2U_u\d u\\
-   & + \int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\nu\sqrt{V_u}\d W_u\\
-   & = O(\nu\Delta^2)
-\end{align*}
-By Holder inequality
+%   \int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u & = \int_{t}^{t+\Delta}\frac{1}{2}(-\kappa U_u)\d (u-t-\Delta\gamma_1)^2\\
+%   & = -\int_{t}^{t+\Delta}\kappa U_u\d \big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\\
+%   & = -\kappa U_{u}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\big|_t^{t+\Delta}+\int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_u\\
+%   %& = -\kappa U_{t+\Delta}\big(\frac{\Delta^2(1-\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)+\kappa U_{t}\big(\frac{\Delta^2\gamma_1^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\\
+%   %& + \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa\d U_u\\
+%%\end{align*}
+%%Let $B=-\frac{\Delta^2\gamma_1^2}{2}$,
+%%\begin{align*}
+%   %\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\d u
+%   & = \kappa U_{t+\Delta}\big(\frac{(1-\gamma_1)^2-\gamma_1^2}{2}\Delta^2\big)+ \int_{t}^{t+\Delta}\big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\kappa \d U_u\\
+%   & = -\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma_1\bigg)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
+%   %& = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\d U_u\\
+%   & = O(\nu\Delta^2)+\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa \d (-\kappa U_u\d u + \nu\sqrt{V_u}\d W_u)\\
+%   & = O(\nu\Delta^2)-\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa^2U_u\d u\\
+%   & + \int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\bigg)\kappa\nu\sqrt{V_u}\d W_u\\
+%   & = O(\nu\Delta^2)
+%\end{align*}
+It easy to see that the second term of \ref{appeqnU_t} $\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma \bigg)=O(\nu\Delta^2)$. By Holder inequality, the third term of \ref{appeqnU_t}
 \begin{align*}
-   \int_{t}^{t+\Delta}(u-t)\Delta\gamma_1\kappa^2U_u\d u &\leq \Delta\gamma_1\kappa^2\sqrt{\int_{t}^{t+\Delta}(u-t)^2\d u\int_{t}^{t+\Delta}U_u^2\d u}\\
+   \int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)\kappa^2U_u\d u &\leq \Delta\gamma \kappa^2\sqrt{\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)^2\d u\int_{t}^{t+\Delta}U_u^2\d u}\\
    & = O(\nu\Delta^2)
 \end{align*}
-Likewise, integral $ \int_{t}^{t+\Delta}\frac{(u-t)^2}{2}\kappa^2U_u\d u$ is also of order $O(\nu\Delta^2)$.
-Now we want to show that for Ito integral $I =\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma_1\big)\kappa\nu\sqrt{V_u}\d W_u$. By Theorem 4.7 of \cite{Klebaner2005}, $I$ is a continuous zero mean square integrable martingale.  Since $V_t$ is a Cox-Ingersoll-Ross process, we know its expectation given $V_0$ is $\mathbb{E}(V_t)=V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})$.
+Now we want to show that for the last term of \ref{appeqnU_t}, which is an Ito integral $$I =\nu\int_{t}^{t+\Delta}h(u)\sqrt{V_u}\d W_u.$$ By Theorem 4.7 of \cite{Klebaner2005}, $I$ is a continuous zero mean square integrable martingale.  Since $V_t$ is a Cox-Ingersoll-Ross process, we know its expectation given $V_0$ is $\mathbb{E}(V_t)=V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})$, which is of order O(1).
 \begin{align*}
  \mathbb{E}(I)&= 0\\
   \text{Var}(I)&= \mathbb{E}(I^2) \\
-  \text{by Ito Isometry} &= \mathbb{E}\bigg(\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2\nu^2 V_u\d u\bigg)\\
-  &=\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2\nu^2 \mathbb{E}(V_u)\d u\\
-  &=\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2\nu^2 (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u}))\d u\\
-  &=\kappa^2\nu^2\bigg[\int_{t}^{t+\Delta}\frac{1}{20} (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})) \d (u-t)^5\\
-  &-\int_{t}^{t+\Delta}\frac{1}{4}\Delta\gamma_1 (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u}))\d (u-t)^4\\
-  &+\int_{t}^{t+\Delta}\frac{\Delta^2}{3}\gamma_1^2(V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})) \d(u-t)^3\bigg]\\
-  &=\kappa^2\nu^2 \Delta^5\bigg(\frac{1}{20}(V_0 e^{-\kappa (\xi^\frac{1}{5}+t)}+\theta(1-e^{-\kappa (\xi^\frac{1}{5}+t)})-\frac{1}{4}\gamma_1(V_0 e^{-\kappa (\xi^\frac{1}{4}+t)}+\theta(1-e^{-\kappa (\xi^\frac{1}{4}+t)})\\
-  &+\frac{1}{3}\gamma_1^2(V_0 e^{-\kappa (\xi^\frac{1}{3}+t)}+\theta(1-e^{-\kappa(\xi^\frac{1}{3}+t)}))\bigg)
+  \text{by Ito Isometry} &= \mathbb{E}\bigg(\nu^2 \int_{t}^{t+\Delta}h(u)^2 V_u\d u\bigg)\\
+  &=\nu^2\int_{t}^{t+\Delta}h(u)^2 \mathbb{E}(V_u)\d u\\
+ % &=\nu^2\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2 \mathbb{E}(V_u)\d u\\
+%  &=\kappa^2\nu^2\bigg[\int_{t}^{t+\Delta}\frac{1}{20} (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})) \d (u-t)^5\\
+%  &-\int_{t}^{t+\Delta}\frac{1}{4}\Delta\gamma_1 (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u}))\d (u-t)^4\\
+%  &+\int_{t}^{t+\Delta}\frac{\Delta^2}{3}\gamma_1^2(V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})) \d(u-t)^3\bigg]\\
+%  &=\kappa^2\nu^2 \Delta^5\bigg(\frac{1}{20}(V_0 e^{-\kappa (\xi^\frac{1}{5}+t)}+\theta(1-e^{-\kappa (\xi^\frac{1}{5}+t)})-\frac{1}{4}\gamma_1(V_0 e^{-\kappa (\xi^\frac{1}{4}+t)}+\theta(1-e^{-\kappa (\xi^\frac{1}{4}+t)})\\
+%  &+\frac{1}{3}\gamma_1^2(V_0 e^{-\kappa (\xi^\frac{1}{3}+t)}+\theta(1-e^{-\kappa(\xi^\frac{1}{3}+t)}))\bigg)
+\text{by mean-value theorem}&=O(\nu^2\Delta^3)
 \end{align*}
-where $\xi\in[t,t+\Delta]$.\\
-Therefore, I is a normal random variable with mean zero and variance of order $O(\nu^2\Delta^5)$. I is of order $O(\nu\Delta^{2.5})$.\\
-Similarly, for the third term of Equation \ref{appeqnU_t}, Ito integral $\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u$ is also a normal distributed random variable with mean zero and variance of order $O(\nu^2\Delta^{3})$. So, the integral is of order $O(\nu\Delta^{1.5})$.\\
-We proved the overall order of the approximation of $\int_{t}^{t+\Delta}V_u\d u $ is $O(\nu\Delta^{1.5})$.
+%where $\xi\in[t,t+\Delta]$.\\
+%Therefore, I is a normal random variable with mean zero and variance of order $O(\nu^2\Delta^5)$. I is of order $O(\nu\Delta^{2.5})$.\\
+%Similarly, for the third term of Equation \ref{appeqnU_t}, Ito integral $\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\d W_u$ is also a normal distributed random variable with mean zero and variance of order $O(\nu^2\Delta^{3})$. 
+So, $I$ is a normal distributed random variable with mean zero and variance of order $O(\nu^2\Delta^{3})$. The Ito integral $I$ is of order $O(\nu\Delta^{1.5})$.\\
+We proved that
+\begin{equation*}
+   \int_{t}^{t+\Delta}U_u\d u = \Delta\big(\gamma U_t+(1-\gamma) U_{t+\Delta}\big)+O(\nu\Delta^{1.5}),
+\end{equation*}
+which is also true for $\int_{t}^{t+\Delta}V_u\d u$. Thus we proved that $\int_{t}^{t+\Delta}V_u\d u=\Delta\big(\gamma V_t+(1-\gamma) V_{t+\Delta}\big)+O(\nu\Delta^{1.5})$.
 \section*{Acknowledgments}
 %This section should come before the References. Funding
 %information may also be included here.
