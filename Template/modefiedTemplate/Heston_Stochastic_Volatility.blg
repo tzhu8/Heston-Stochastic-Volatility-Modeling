@@ -1,4 +1,6 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: Heston_Stochastic_Volatility.aux
-I found no \bibdata command---while reading file Heston_Stochastic_Volatility.aux
-I found no \bibstyle command---while reading file Heston_Stochastic_Volatility.aux
-(There were 2 error messages)
+The style file: plainnat.bst
+Database file #1: Thebib.bib
+Warning--I didn't find a database entry for "Andersen"
+Warning--empty journal in Andersen2006
+(There were 2 warnings)
