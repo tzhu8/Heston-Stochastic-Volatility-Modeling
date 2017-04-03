@@ -54,12 +54,13 @@ QEzero = zeros(size(nu));
 
 %nu = log(nu);
 %nu = exp(nu);
+%QEprice = log(QEprice);
 n=10;
 figure
-plot(nu(1:n),ourQEprice(1:n),'-o',nu(1:n),QEprice(1:n),'-*','LineWidth',1.25)
-title('QE scheme for small nu')
-xlabel('log(nu)')
-%xlabel('nu')
+semilogx(nu(1:n),ourQEprice(1:n),'-o',nu(1:n),QEprice(1:n),'-*','LineWidth',1.25)
+title('QE scheme for small \nu')
+%xlabel('log(nu)')
+xlabel('\nu')
 ylabel('Option price')
 hold on
 plot(nu(1:n),v0,'-.','LineWidth',1.25)
