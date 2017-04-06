@@ -1,4 +1,4 @@
-%{
+
 
 %% QE_European call option
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
@@ -34,6 +34,7 @@ inp.priceParam.relTol = 0.01; %one penny on the dollar relative tolerance
 
 Ntime = T/0.25; 
 NSim = 1e6;
+
 nu = [0,10^(-6),10^(-5),10^(-4),10^(-3),10^(-2),0.05,10^(-1),0.15,0.2];
 ourQEprice = zeros(size(nu));
 QEprice = zeros(size(nu));
@@ -67,3 +68,37 @@ plot(nu(1:n),v0,'-.','LineWidth',1.25)
 hold on
 plot(nu(1:n),QEzero,'--g','LineWidth',2)
 hold off
+%% Generate LaTex code for a table of "nu is close or equal to zero"
+clear input;
+temp = NaN(1,9);
+call_exact = [ourGBMCallPrice.exactPrice,temp];%,SobolCallPrice_exact,temp];
+%put_exact = [GBMPutPrice_exact,temp];%,SobolPutPrice_exact,temp];
+content = [call_exact; QEprice; ourQEprice];
+% content = [call_exact;iid_temp(1:2,:),Sobol_temp(1:2,:); ...
+%     put_exact;iid_temp(3:4,:),Sobol_temp(3:4,:)];
+input.data = content;
+% Set column labels (use empty string for no label):
+input.tableColLabels = {'0','10e-6','10e-5','10e-4','10e-3','10e-2','0.05','10e-1','0.15','0.2'};
+% Set row labels (use empty string for no label):
+input.tableRowLabels = {'Exact price','QE','Modified QE'};
+
+% Switch transposing/pivoting your table:
+input.transposeTable = 0;
+
+% Determine whether input.dataFormat is applied column or row based:
+input.dataFormatMode = 'column'; % use 'column' or 'row'. if not set 'colum' is used
+input.dataFormat={'%.3f',10};%,'%.4f',3,'%5.2fs',3,'%3.2E',3};
+input.dataNanString = '-';
+input.tableColumnAlignment = 'c';
+% Switch table borders on/off (borders are enabled by default):
+input.tableBorders = 0;
+% LaTex table caption:
+input.tableCaption = '$\nu$ is close or equal to zero';
+% LaTex table label:
+input.tableLabel = 'nu=0';
+% Switch to generate a complete LaTex document or just a table:
+input.makeCompleteLatexDocument = 0;
+% Switch to landscape table:
+input.landscape = 0;
+% call latexTable:
+latex = latexTable(input);
