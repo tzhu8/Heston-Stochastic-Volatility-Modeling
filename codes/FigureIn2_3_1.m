@@ -1,8 +1,8 @@
 
-
+%%{
 %% QE_European call option
 % %InitializeWorkspaceDisplay %initialize the workspace and the display parameters
-T=5;
+T=2;
 delta_t=0.2;
 t0 = delta_t;
 inp.timeDim.timeVector = t0:delta_t:T; 
@@ -59,6 +59,7 @@ QEzero = zeros(size(nu));
 n=10;
 figure
 semilogx(nu(1:n),ourQEprice(1:n),'-o',nu(1:n),QEprice(1:n),'-*','LineWidth',1.25)
+axis([0 1 -1.9 16])
 title('QE scheme for small \nu')
 %xlabel('log(nu)')
 xlabel('\nu')
@@ -68,6 +69,7 @@ plot(nu(1:n),v0,'-.','LineWidth',1.25)
 hold on
 plot(nu(1:n),QEzero,'--g','LineWidth',2)
 hold off
+return
 %% Generate LaTex code for a table of "nu is close or equal to zero"
 clear input;
 temp = NaN(1,9);
