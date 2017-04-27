@@ -68,13 +68,14 @@ The setup of the paper is as follows: we first introduce Heston model, QE scheme
 
 \section{Options Modeled by the Heston Stochastic Volatility Model}
 \subsection{The Heston Model}
-Heston model is defined as
+Steven L. Heston introduced a stochastic volatility model which describes the evolution of the volatility of an asset price process \cite{Heston1993}. Compared to fixed volatility models, stochastic volatility models more accurately explain data from the real world.
+The Heston model assumes the following dynamics of stock price and volatility processes:
  \begin{align}
-    \d X & =\mu X\,\d t+\sqrt{V}X\,\d W_1\label{eq1}\\
-    \d V &= \kappa (\theta-V)\,\d t +\nu\sqrt{V}\,\d W_2\label{eq2}
+    \d X_t & =\mu X_t\,\d t+\sqrt{V_t}X_t\,\d W_t^1\label{eq1}\\
+    \d V_t &= \kappa (\theta-V_t)\,\d t +\nu\sqrt{V_t}\,\d W_t^2\label{eq2}
   \end{align}
 
- The first equation simulates the asset price process and the second equation gives the evolution of the volatility process. $X$ denotes the asset price. $V$ is the stochastic volatility process.  Two standard Brownian motions, $\d W_1$ and $\d W_2$, are set with a correlation constant $\rho$. $\mu$, $\kappa$, $\theta$, $\nu$ are constant parameters $\mu$ is the risk-free interest rate. $\kappa$ is the speed of mean reversion. $\theta$ is the value of the long-term variance. $\nu$ is the volatility of volatility.
+The first equation describes the asset price process $X_t$ and the second equation gives the evolution of the variance process $V_t$. Two standard Brownian motions, $\d W_1$ and $\d W_2$, are set with a correlation constant $\rho$. The drift, the mean reversion speed of the variance, the long-term variance, and the volatility of the variance are denoted by $\mu$, $\kappa$, $\theta$ and $\nu$ respectively.
 
 %\begin{align*}
 %\text{where }&\\
@@ -88,29 +89,32 @@ Heston model is defined as
 %   & \nu \text{ is the volatility of volatility.}
 %\end{align*}
 
-Applying the Ito's formula to Eq.\eqref{eq1}, an equivalent form to simulate the process of asset price is shown in Eq.\eqref{logX}.
+Applying the Ito's formula to Eq.\eqref{eq1}, we have an equivalent form of asset price process:.
 \begin{equation}\label{logX}
   \d\ln(X)=(\mu-\frac{V}{2})\,\d t+\sqrt{V}\,\d W_1
 \end{equation}
 
+The asset price process $X$ is governed by a geometric Brownian motion stochastic volatility.
+
 \subsection{Quadratic Exponential Scheme for Stochastic Volatility}
-We applied the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process. Detailed steps are listed as follows:
+We apply the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{Andersen} to simulate the volatility process. Let $\hat{V}$ denote the discrete-time approximation of $V$. Detailed steps are listed below.
+
 \begin{enumerate}
-\item Given $\hat{V}(t)$, compute $m$ and $s^2$ from following equations
+\item Given $\hat{V_t}$, compute $m$ and $s^2$ from following equations
 \begin{align*}
-  m &=\theta + (\hat{V}(t)-\theta)e^{-\kappa\Delta} \\
-  s^2 &=\frac{\hat{V}(t)\nu^2 e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta\nu^2}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2
+  m &=\theta + (\hat{V_t}-\theta)e^{-\kappa\Delta} \\
+  s^2 &=\frac{\hat{V_t}\nu^2 e^{-\kappa\Delta}}{\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)+\frac{\theta\nu^2}{2\kappa}\bigg(1-e^{-\kappa\Delta}\bigg)^2.
 \end{align*}
-\item Compute $\psi=s^2/m^2$\\
-\item Draw a uniform random number $U_V$
+\item Compute $\psi=s^2/m^2$.
+\item Draw a uniform random number $U_V$.
 \item If $\psi\leq\psi_c$:
 \begin{enumerate}
 \item Compute $a$ and $b$ from following equations
 \begin{align*}
 b^2=2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0, \qquad a =\frac{m}{1+b^2}.
 \end{align*}
-\item Compute $Z_V=\Phi^{-1}(U_V)$
-\item Set $\hat{V}(t+\Delta)=a(b+Z_V)^2$
+\item Compute $Z_V=\Phi^{-1}(U_V)$, where $Phi$ is the standard normal distribution function.
+\item Set $\hat{V}_{t+\Delta}=a(b+Z_V)^2$.
 \end{enumerate}
 \item Otherwise, if $\psi>\psi_c$
 \begin{enumerate}
@@ -119,7 +123,7 @@ b^2=2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0, \qquad a =\frac{m}{
     p & =\frac{\psi-1}{\psi+1}\in[0,1), \qquad%\\
     \beta =\frac{1-p}{m}=\frac{2}{m(\psi+1)}>0.
   \end{align*}
-  \item set $\hat{V}(t+\Delta)=\Psi^{-1}(U_V;p,\beta)$
+  \item Set $\hat{V}_{t+\Delta}=\Psi^{-1}(U_V;p,\beta)$, where $\Psi$ is the exponential distribution with Dirac measure.
   \begin{equation*}
     \Psi(x) = \text{Pr}(\hat{V}(t+\Delta)\leq x) = p+(1-p)(1-e^{-\beta x}),\, x\geq 0
   \end{equation*}
