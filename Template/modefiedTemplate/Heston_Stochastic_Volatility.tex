@@ -242,88 +242,106 @@ and $A=K_2+\frac{1}{2}K_4$.
 
 \section{Overcoming Numerical Errors for Small Volatility of Variance}
 
-When $\nu$ equal or close to zero, the QE scheme we introduced above can be fragile. Our numerical results show that the option price given by QE scheme deviate from that calculated by exact sampling\footnote{Introduced by Broadie, M. and Kaya, O. (2006) for the Heston stochastic volatility model.They applied the numerical inversion of a cumulative distribution using the characteristic function. The estimator of an asset price generate using the sample stock price and variance from the exact distribution is unbiased. The scheme is computationally expensive, so we used it as benchmarks for result comparison.} and our modified scheme even further when the initial volatility $V_0$ not equals to long-term variance $\theta$. %So, we apply the change of variables technique to reduce the cancellation error.\\
+%When $\nu$ equal or close to zero, the QE scheme we introduced above can be fragile. Our numerical results show that the option price given by QE scheme deviate from that calculated by exact sampling\footnote{Introduced by Broadie, M. and Kaya, O. (2006) for the Heston stochastic volatility model.They applied the numerical inversion of a cumulative distribution using the characteristic function. The estimator of an asset price generate using the sample stock price and variance from the exact distribution is unbiased. The scheme is computationally expensive, so we used it as benchmarks for result comparison.} and our modified scheme even further when the initial volatility $V_0$ not equals to long-term variance $\theta$. %So, we apply the change of variables technique to reduce the cancellation error.\\
+
+Before we introduce our modified QE scheme\footnote{From this section, when we mention the QE scheme (modified QE scheme), we refer to the QE scheme (modified QE scheme) and the discretization scheme (modified discretization scheme) for $X$.}, we first show the problem of the original scheme with a plot.
+When $\nu$ is equal or close to zero, the discretization scheme introduced previously gives inaccurate answers, especially when the initial variance, $V_0$, does not equal to the long-term variance $\theta$.
+
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.55\textwidth]{FigureIn2_3_1}
-\caption{European call option price calculated by QE scheme and our modified QE scheme. Initial price $=80$, strike $=100$, interest $=0$, $\kappa=1$, $\nu=0.5$, $\rho=-0.3$, $\theta=0.09$ and $V_0=0.36$. Small circles denote the price calculated by our modified QE scheme when the relative tolerance = 0.01 was met. The stars denote the price calculated by original QE scheme. The dot-dashed line denotes the option price calculated by Black-Scholes formula when $\nu=0$. The dashed line at the bottom denotes the option price given by QE scheme when $\nu=0$. }
+\includegraphics[width=0.55\textwidth]{Figure2_3_1.eps}
+\caption{European call option price calculate by the QE scheme and our modified QE scheme for an initial price of $\$80$, a strike price of $\$100$, zero interest rate, $T=2$, $\kappa=1$, $\rho=-0.3$, $\theta=0.09$, $V_0=0.36$ and relative tolerance of 1\%. Stars denote the prices calculated by our modified QE scheme when the relative tolerance of 1\% is met. Circles denote the prices calculated by the original QE scheme. The dashed line denotes the option price calculated by the Black-Scholes formula.}
 \end{figure}
 
-\subsection{Finding a $\gamma$ that is accurate for all $\nu$}\label{se:findGamma}
+We calculate the price of European call options with different values of $\nu$. Neither the QE scheme nor the exact sampling works for small $\nu$. When $\nu$ equals zero and the initial variance $V_0$ does not equal to the long-term variance $\theta$, $V_t$ is deterministic and changes over time. We set the variance in the Black-Scholes formula to be the same as the long-term variance $\theta$ and the correct option price should be close to this price when $\nu$ is small. However, the original QE scheme gives zero option price when $\nu$ equals zero and prices close to zero when $\nu$ is close to zero. It is clear from Figure 3.1 that the original QE scheme deviates from the prices calculated by the Black-Scholes model and our modified QE scheme when $\nu$ is smaller than approximately 0.05.
 
-Recall Eq.\eqref{lnX}, the Broadie-Kaya scheme in integral form is written as
-\begin{equation*}
+\subsection{Finding a $\gamma$ that is accurate for the approximation of the time integral of V}\label{se:findGamma}
+
+From \eqref{lnX} and \eqref{approxIntV}, the Broadie-Kaya scheme in integral form is written as
+\begin{equation}\label{eq:InX_intV}
 \begin{split}
-    \text{ln}X(t+\Delta)=&\text{ln}X(t)+\frac{\rho}{\nu}(V(t+\Delta)-V(t)-\kappa\theta\Delta)+\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)\int_{t}^{t+\Delta} V(u)du\\
-     &+\sqrt{1-\rho^2}\int_{t}^{t+\Delta}\sqrt{V(u)}\,\d W(u).
+    \text{ln}X_{t+\Delta}=&\text{ln}X_t+\frac{\rho}{\nu}(V_{t+\Delta}-V_t-\kappa\theta\Delta)+\bigg(\frac{\kappa\rho}{\nu}-\frac{1}{2}\bigg)\int_{t}^{t+\Delta} V_u du\\
+    &+\sqrt{(1-\rho^2)\int_{t}^{t+\Delta}V_u\,\d u}\cdot Z.
 \end{split}
-\end{equation*}
-We need to handle the time-integral of $V$. Rather than simply setting $\gamma_1=\gamma_2=\frac{1}{2}$, we want to find the exact value of $\gamma_1$ and $\gamma_2$ that make the following equation holds.\\
-When $\nu=0$, the stochastic partial differential equation of $V$ (Eq.\eqref{eq2}) has a solution in form
-\begin{equation}\label{V nu=0}
-  V(t)=\theta + (V(0)-\theta)e^{-\kappa t}
 \end{equation}
-Denote $C=V(0)-\theta$,then $V(t)-\theta= Ce^{-\kappa t}$.\\
+
+We need to approximate the time-integral of $V$. Rather than simply setting $\gamma=1/2$, we want to find the value of $\gamma$ that makes \eqref{approx_du} exact for $\nu=0$ and show that the error for the approximation of  $\int_{t}^{t+\Delta} V_u du$ is of order $o(\nu\Delta)$. The factor of $\nu$ in the error will then cancel the factor of $1/\nu$ in \eqref{eq:InX_intV}. So, the simulation will be accurate when $\nu$ is close to $0$.
+
+When $\nu=0$, the stochastic partial differential equation of \eqref{eq2} becomes deterministic and has the solution
+\begin{equation}\label{V nu=0}
+  V_t=\theta + (V_0-\theta)e^{-\kappa t}.
+\end{equation}
+
+%Denote $C=V(0)-\theta$,then $V(t)-\theta= Ce^{-\kappa t}$.\\
 %\begin{equation}\label{V C}
 %  V(t)-\theta= Ce^{-\kappa t}
 %\end{equation}
-We have
+Then, we have
 \begin{equation}\label{int V}
   \begin{split}
-    \int_{t}^{t+\Delta}V(u)\,\d u&= \int_{t}^{t+\Delta}(V(u)-\theta)\,\d u+\theta\Delta\\
-    &=\int_{t}^{t+\Delta}Ce^{-\kappa u}\,\d u +\theta\Delta\\
-    &=\frac{-Ce^{-\kappa(t+\Delta)}+Ce^{-\kappa t}}{\kappa}+\theta\Delta\\
+    \int_{t}^{t+\Delta}V_u\,\d u&=\int_{t}^{t+\Delta}(V_0-\theta)e^{-\kappa u}\,\d u +\theta\Delta\\
+    &=\frac{-(V_0-\theta)e^{-\kappa(t+\Delta)}+(V_0-\theta)e^{-\kappa t}}{\kappa}+\theta\Delta\\
     %&=\frac{V(t)-\theta-V(t+\Delta)+\theta}{\kappa}+\theta\Delta.
   \end{split}
 \end{equation}
-We want find a expression of $\theta$ written in terms of $V(t)$ and $V(t+\Delta)$.\\
-Set time to be $t+\Delta$ in Eq.\eqref{V nu=0} and multiply $e^{\kappa\Delta}$ on both sides, we have
+%We want find a expression of $\theta$ written in terms of $V(t)$ and $V(t+\Delta)$.\\
+Setting $t=t+\Delta$ in \eqref{V nu=0} provides us an expression for $\theta$ as% and multiply $e^{\kappa\Delta}$ on both sides, we have
 %\begin{equation*}
 %  V(t+\Delta)-\theta = Ce^{-\kappa(t+\Delta)}
 %\end{equation*}
 %Multiply $e^{\kappa\Delta}$ on both sides,
-\begin{equation*}
-  e^{\kappa\Delta}(V(t+\Delta)-\theta)=Ce^{-\kappa  t}
-\end{equation*}
-Combine with $V(t)-\theta= Ce^{-\kappa t}$, we have the expression of $\theta$ as
+%\begin{equation*}
+%  e^{\kappa\Delta}(V(t+\Delta)-\theta)=Ce^{-\kappa  t}
+%\end{equation*}
+%Combine with $V(t)-\theta= Ce^{-\kappa t}$, we have the expression of $\theta$ as
 \begin{equation*}
 %  \begin{split}
 %    & e^{\kappa\Delta}V(t+\Delta)-V(t)+\theta(1-e^{\kappa\Delta})=0 \\
 %    & \theta=\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}
 %  \end{split}
-\theta=\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}
+\theta=\frac{V_t-e^{\kappa\Delta}V_{t+\Delta}}{1-e^{\kappa\Delta}}
 \end{equation*}
-Substitute the expression of $\theta$ into Eq.\eqref{int V}, we get
+By substituting the above expression of $\theta$ into \eqref{int V}, we obtain
 \begin{equation*}
   \begin{split}
-    \int_{t}^{t+\Delta}V(u)\d u &= \frac{V(t)-V(t+\Delta)}{\kappa}+\Delta\frac{V(t)-e^{\kappa\Delta}V(t+\Delta)}{1-e^{\kappa\Delta}}  \\
-    &=\frac{V(t)(1-e^{\kappa\Delta}+\kappa\Delta)-V(t+\Delta)(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{\kappa(1-e^{\kappa\Delta})} \\
+    \int_{t}^{t+\Delta}V_u\,\d u &= \frac{V_t-V_{t+\Delta}}{\kappa}+\Delta\frac{V_t-e^{\kappa\Delta}V_{t+\Delta}}{1-e^{\kappa\Delta}}  \\
+    %&=\frac{V_t(1-e^{\kappa\Delta}+\kappa\Delta)-V_{t+\Delta}(1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta})}{\kappa(1-e^{\kappa\Delta})} \\
      %&=\Delta[\gamma_1 V(t)+\gamma_2 V(t+\Delta)]
-     &=\Delta[\gamma V(t)+(1-\gamma) V(t+\Delta)]
+     &=\Delta[\gamma V_t+(1-\gamma) V_{t+\Delta}],
   \end{split}
 \end{equation*}
 where
+\begin{equation}\label{eq:gamma}
+  \gamma = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})},\quad 0\leq\gamma\leq1.
+\end{equation}
+
+As $\kappa\Delta\rightarrow 0$, $\gamma\rightarrow\frac{1}{2} $.
+When $\kappa\Delta$ goes to zero, our scheme becomes the Trapezoidal rule.
+We want to apply the value of $\gamma$ in \eqref{eq:gamma} for all values of $\nu$ to approximate the integral $\int_{t}^{t+\Delta}V_u \,\d u$. In Appendix~\ref{sec:AppendixA}, it is shown that
+\begin{equation*}
+  \int_{t}^{t+\Delta}V_u\,\d u = \Delta[\gamma V_t+(1-\gamma) V_{t+\Delta}] + O(\nu\Delta^{1.5}).
+\end{equation*}
 %\begin{align*}
 %  \gamma_1 &= \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})} &
 %  \gamma_2 &= -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}
 %\end{align*}
 %$\gamma_1 =
-$\gamma = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})}$,
+%$\gamma = \frac{1-e^{\kappa\Delta}+\kappa\Delta}{\kappa\Delta(1-e^{\kappa\Delta})}$,
 %$\gamma_2 = -\frac{1-e^{\kappa\Delta}+\kappa\Delta e^{\kappa\Delta}}{\kappa\Delta(1-e^{\kappa\Delta})}$.
 %We know $\gamma_1\geq 0$ and $\gamma_2\geq 0$.\\
-$\gamma\geq 0$.
-As $\kappa\Delta\rightarrow 0$, $\gamma\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} $.\\
+%$\gamma\geq 0$.
+%As $\kappa\Delta\rightarrow 0$, $\gamma\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} $.\\
 %\begin{align*}
 % \gamma_1 &\rightarrow\frac{\frac{1}{2}(\kappa\Delta)^2}{\kappa\Delta}=\frac{1}{2} \\
 %  \gamma_2 &\rightarrow\frac{-(1+\kappa\Delta+\frac{1}{2}(\kappa\Delta)^2)(1-\kappa\Delta)+1}{\kappa\Delta(\kappa\Delta)}
 %  \rightarrow\frac{-(1-(\kappa\Delta)^2)-\frac{1}{2}(\kappa\Delta)^2+\frac{1}{2}(\kappa\Delta)^3+1}{(\kappa\Delta)^2}\rightarrow\frac{1}{2}
 %\end{align*}
-When $\kappa\Delta$ goes to zero, our scheme just like the Euler scheme.\\
-For $\nu\neq 0$, we approximate the integral $\int_{t}^{t+\Delta}V(u)\d u$ as follow:
-\begin{equation*}
-  \int_{t}^{t+\Delta}V(u)\d u = \Delta[\gamma V(t)+(1-\gamma) V(t+\Delta)] + O(\nu\Delta^{1.5}).
-\end{equation*}
-See the proof of the error order of this approximation in ~\ref{sec:AppendixA}.
+%When $\kappa\Delta$ goes to zero, our scheme just like the Euler scheme.\\
+%For $\nu\neq 0$, we approximate the integral $\int_{t}^{t+\Delta}V(u)\d u$ as follow:
+%\begin{equation*}
+%  \int_{t}^{t+\Delta}V(u)\d u = \Delta[\gamma V(t)+(1-\gamma) V(t+\Delta)] + O(\nu\Delta^{1.5}).
+%\end{equation*}
+%See the proof of the error order of this approximation in ~\ref{sec:AppendixA}.
 \subsection{Change of variables to avoid overflow}
 We want to do change of variable of $s^2, m, \psi, b^{-2}, a, b, K_0,K_1,K_2, K_3,$ and $ K_4$ in a way that $\nu$ becomes multiplier rather than divisor.\\
 For parameters in QE scheme, we do change of variables. As we see, new variables $\tilde{s}^2, \tilde{m}$ and $\tilde{\psi}$ are free of $\nu$.
