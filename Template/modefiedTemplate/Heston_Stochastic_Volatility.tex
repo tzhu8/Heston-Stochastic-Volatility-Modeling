@@ -18,6 +18,9 @@
 \usepackage{cleveref}
 \graphicspath{ {graphs/} }
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\usepackage{multirow}
+\usepackage{threeparttable}
 
 \begin{document}
 
@@ -58,7 +61,7 @@ Typeset similarly for keywords below.
 
 In the financial market, observed volatility of the asset prices is not a constant. For more accurate option pricing, we need an algorithm that simulates the volatility process. There are several well-known stochastic volatility models: the Hull-white model \cite{HullWhite1987}, the Scott-Chesny model \cite{ScottChesney1989}, the Heston model \cite{Heston1993} and the SABR model \cite{SABR2002}. We focus on the Heston model since it is one of the most widely used stochastic volatility models. Specifically, the Quadratic Exponential (QE) scheme is used to simulate the volatility process and the Broadie-Kaya scheme gives the discretization of the asset price process.
 
-However, the standard implementation gives inaccurate results when the volatility of the asset prices' variance is very small or zero. Thus inaccuracy is accentuated when the initial variance does not start from the value of the long-term variance. We identify this problem and fix it by finding a more accurate approximation of the time integral of the volatility. We also make a change of variables in the QE scheme to avoid round-off errors in the discretization scheme of the asset price process. We compare the results with different options at different strike prices. Our numerical experiments show that the new algorithm is accurate and fast. %In addition, we implement the modified scheme in the Guaranteed Automatic Integration Library (GAIL), which theoretically guarantees the result and stops algorithms automatically with user defined error tolerance. %We compare the results with other simulation methods such as geometric Brownian motion and quasi-Monte Carlo, when setting the volatility of asset prices' volatility as zero, because in this case, the algorithm works like the one of asset price process with deterministic volatility. It shows that the new algorithm is accurate and fast. 
+However, the standard implementation gives inaccurate results when the volatility of the asset prices' variance is very small or zero. Thus inaccuracy is accentuated when the initial variance does not start from the value of the long-term variance. We identify this problem and fix it by finding a more accurate approximation of the time integral of the volatility. We also make a change of variables in the QE scheme to avoid round-off errors in the discretization scheme of the asset price process. We compare the results with different options at different strike prices. Our numerical experiments show that the new algorithm is accurate and fast. %In addition, we implement the modified scheme in the Guaranteed Automatic Integration Library (GAIL), which theoretically guarantees the result and stops algorithms automatically with user defined error tolerance. %We compare the results with other simulation methods such as geometric Brownian motion and quasi-Monte Carlo, when setting the volatility of asset prices' volatility as zero, because in this case, the algorithm works like the one of asset price process with deterministic volatility. It shows that the new algorithm is accurate and fast.
 
 In addition, we implement the modified scheme in the Guaranteed Automatic Integration Library (GAIL), which theoretically guarantees the result and stops algorithms automatically with user defined error tolerance. The GAIL includes a suite of algorithms that applies the Monte Carlo methods for multidimensional integration and computation of means. The financial application modules of GAIL are under construction, and our work is aimed to add efficient and accurate algorithms of calculating stochastic volatility model in the asset path class.
 
@@ -249,7 +252,7 @@ When $\nu$ is equal or close to zero, the discretization scheme introduced previ
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.55\textwidth]{Figure2_3_1.eps}
+\includegraphics[width=0.55\textwidth]{FigureIn2_3_1.eps}
 \caption{European call option price calculate by the QE scheme and our modified QE scheme for an initial price of $\$80$, a strike price of $\$100$, zero interest rate, $T=2$, $\kappa=1$, $\rho=-0.3$, $\theta=0.09$, $V_0=0.36$ and relative tolerance of 1\%. Stars denote the prices calculated by our modified QE scheme when the relative tolerance of 1\% is met. Circles denote the prices calculated by the original QE scheme. The dashed line denotes the option price calculated by the Black-Scholes formula.}
 \end{figure}
 
@@ -547,7 +550,191 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 
 \section{Determining the Number of Samples Required to Meet a Specified Error Tolerance}
 
+
+
 \section{Numerical Examples}
+
+We implement our modified QE scheme into GAIL and test our modified QE scheme by pricing European and American options. First we show test results for small $\nu$ compared with the original QE scheme and Broadie and Kaya's exact sampling. Then we compare the modified QE scheme without martingale correction to the modified QE scheme with martingale correction. Our numerical results support our claim in Section \ref{se:mtg correction} that the difference of option prices between the schemes with and without martingale correction is minor. However, the scheme with martingale correction is more computationally expensive. Then we introduce importance sampling to reduce variance and illustrate reduced runtimes and sample sizes in test results. Finally, we show how Sobol sampling with our modified scheme improves the computational efficiency in comparison to i.i.d.\ sampling.
+
+\subsection{Tests for small $\nu$}
+
+We test our scheme by pricing an European call option. The parameters are setup as in Table \ref{tab:params setup for n=0}. We set the relative error tolerance (relTol) as 0.5\% in GAIL. GAIL will return prices that satisfy our error tolerance \cite{Hickernell2012}. The parameter $K$ denotes strike price.
+\begin{table}[h]
+ \caption{Parameters for numerical tests} % title of the table
+ \centering                          % centering table
+ \begin{tabular}{cccccccccc}          % creating eight columns
+ \hline\hline                        % inserting double-line
+ $T$ & $\Delta$ & $S_0$ & $K$ & $V_0$ & $\theta$ & $\kappa$ & $\rho$ & $r$ & relTol\\ [0.5ex]
+ \hline                                      % inserts single-line
+5  & 0.2 & 100 & 90 & 0.04 & 0.09 & 1 & -0.3& 0 & 0.5\%\\[1ex] % [1ex] adds vertical space
+ \hline                                       % inserts single-line
+ \end{tabular}
+ \label{tab:params setup for n=0}
+ \end{table}
+In Table \ref{table:nu=0}, the exact price means the price calculated by exact sampling\footnote{The exact sampling was introduced by M. Broadie and \"{O}. Kaya for the Heston stochastic volatility model. They applied the numerical inversion of a cumulative distribution using the characteristic function. The estimator of an asset price generate using the sample stock price and variance from the exact distribution is unbiased.}. This scheme is bias-free yet computationally expensive, so we use it as a benchmark. The exact sampling returns error messages for small values of $\nu$, so we use ``-" to indicate that an error occurred. The MATLAB codes for the exact sampling are provided in Kienitz \cite{Kienitz2012}. The reason why the difference between the exact price and the QE price is larger than 1\%  is that the sampling size we used for computing the exact price is limited by the computers' memory. The result will be more accurate if we are able to increase its sample size.
+\begin{table}[h]
+\caption{Test of European call options with $\nu$ close or equal to zero}
+\label{table:nu=0}
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lccccccccc}
+\hline\hline
+ $\nu$ & 0 & 1e-6 & 1e-5 & 1e-4 & 1e-3 & 1e-2 & 0.05 & 0.1 & 0.5 \\
+ \hline
+Exact price & - & - & - & - & - & - & - & - & 27.782 \\
+QE & 0.000 & 35.797e+22 & 14.193e+3 & 81.095 & 32.380 & 29.191 & 28.915 & 28.811 & 27.493 \\
+Modified QE & 28.859 & 28.874 & 28.870 & 28.926 & 28.901 & 28.923 & 28.849 & 28.783 & 27.542 \\
+Diff & 28.859 & 35.797e+22 & 14.164e+3 & 52.169 & 3.479 & 0.268 & 0.065 & 0.028 & 0.049 \\
+[1ex]
+\hline
+\end{tabular}}
+\end{table}
+From the test result we can see that our modified QE scheme works for all test values of $\nu$. For given parameters, we consider $\nu=0.01$ as the break point for the original QE scheme. When $\nu$ is smaller than 0.01, the relative difference between the original QE scheme and the modified QE scheme is larger than two times of the 0.5\% relative error tolerance. When $\nu=0.01$, the difference is barely within the twice of the relative error tolerance. The original QE scheme gives satisfactory results for $\nu$ larger than 0.01.
+
+\subsection{Compare the modified QE scheme to the modified QE scheme with martingale correction}
+
+Now we price European call options and compare test results of our modified schemes with and without martingale correction. The parameters are setup as in Table \ref{tab:params setup}. We test for different strike prices and results shown in Table \ref{table:QE with QE_m}. For each case, we repeat calculation for five times and take the average of price, time and sample size. The scheme with martingale correction takes a third more runtime
+\begin{table}[h]
+ \caption{Parameters for numerical tests} % title of the table
+ \centering                          % centering table
+ \begin{tabular}{cccccccccc}          % creating eight columns
+ \hline\hline                        % inserting double-line
+ $T$ & $\Delta$ & $S_0$ & $V_0$ & $\theta$ & $\nu$ & $\kappa$ & $\rho$ & $r$ & relTol\\ [0.5ex]
+ \hline                                      % inserts single-line
+ 5  & 0.2 & 60 & 0.5 & 0.16 & 0.4 &1 & -0.3& 0 & 1\%\\[1ex] % [1ex] adds vertical space
+ \hline                                       % inserts single-line
+ \end{tabular}
+ \label{tab:params setup}
+\end{table}
+\begin{table}[h]
+\caption{Compare modified QE with modified QE\_m}
+\label{table:QE with QE_m}
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lccccccccc}
+\hline\hline
+\multirow{2}{*}{Option} & \multicolumn{3}{c}{Price (relTol=0.01)}&\multicolumn{3}{c}{Time (s)}&\multicolumn{3}{c}{Sample Size}  \\
+\cline{2-10}
+ & K=20 & K=60 & K=100 & K=20 & K=60 & K=100 & K=20 & K=60 & K=100 \\
+\hline
+Modified QE & 42.782 & 23.505 & 14.208 & 8.33 & 17.70 & 29.42 & 1.08e+6 & 2.28e+6 & 3.75e+6 \\
+Modified QE\_m & 42.727 & 23.469 & 14.213 & 13.08 & 23.83 & 39.73 & 1.21e+6 & 2.22e+6 & 3.65e+6 \\
+Diff & 0.055 & 0.036 & 0.005 & - & - & - & - & - & - \\
+[1ex]
+\hline
+\end{tabular}}
+\end{table}
+than that without martingale correction while the difference of average prices are within 0.2\%. Because the martingale correction is more time consuming, we apply the modified QE scheme without martingale correction for the rest of numerical tests.
+
+\subsection{Test options with importance sampling}
+
+For out of the money options, we need much larger sample sizes to meet the user-defined error tolerance. In order to increase accuracy and reduce sample size, we apply importance sampling---a variance reduction technique.
+
+As defined in \eqref{eq1}, the asset price process $X_t$ is driven by a Brownian motion. Or more precisely, our modified simulation scheme \eqref{newLnX} and \eqref{newLnX2} is driven by a Gaussian random variable. So we can shift the mean of the Gaussian random variable to sample the asset price process more at where it gives positive payoffs \cite{Glasserman2003}.
+%For $\textbf{t}=(t_1,..., t_d)'$, $t_i=\frac{T}{d}i, i=1,..., d$,
+%we have $\textbf{W}= (W_1,..., W_d)\sim \cN(\textbf{0},\Sigma)$, where $\Sigma_{i,j}=\min(t_i,t_j)^d_{i,j=1}$.
+%For any $c\in \bR$,
+%\begin{equation*}
+%  \mathbf{Y}=(Y_1,...,Y_d)\sim \cN(c\textbf{t},\Sigma),
+%\end{equation*}
+%and so the likelihood ratio is
+%\begin{equation*}
+%  \frac{f_{\textbf{W}}(\textbf{y})}{f_{\textbf{Y}}(\textbf{y})}
+%  =\frac{e^{-\frac{1}{2}(\textbf{y}'\Sigma^{-1}\textbf{y})}}{e^{-\frac{1}{2}\big(
+%  (\textbf{y}-c\textbf{t}')\Sigma^{-1}(\textbf{y}-c\textbf{t})\big)}}
+%  =e^{-c\mathbf{y}'\Sigma^{-1}\mathbf{t}+\frac{1}{2}c^2\mathbf{t}'\Sigma^{-1}\mathbf{t}},
+%\end{equation*}
+%where $f$ is the probability density function.
+%The importance sampling estimator of the option price is then written as
+%\begin{equation*}
+%  \frac{1}{n}\sum_{k=1}^{n}\text{payoff}(\mathbf{Y}_{k})e^{-c\mathbf{Y}'_k\Sigma^{-1}\mathbf{t}
+%  +\frac{1}{2}c^2\mathbf{t}'\Sigma^{-1}\mathbf{t}}.
+%\end{equation*}
+%Let $\mathbf{q}$ denotes a vector that satisfies $\Sigma\mathbf{q}=\mathbf{t}$. Then $\mathbf{q}=(0,...,0 ,1)'$ and the above equation can be simplifies as
+%\begin{equation*}
+%  \frac{1}{n}\sum_{k=1}^{n}\text{payoff}(\mathbf{Y}_{k})e^{-c\mathbf{Y}'_k\mathbf{q}
+%  +\frac{1}{2}c^2\mathbf{t}'\mathbf{q}}=\frac{1}{n}\sum_{k=1}^{n}\text{payoff}(\mathbf{Y}_{k})e^{-c{Y}_{k,d}+\frac{1}{2}c^2T}.
+%\end{equation*}
+We implement importance sampling in GAIL. Given parameters in Table \ref{tab:params setup}, we set the value of mean shifts for tests of importance sampling as in Table \ref{tab:params setup for IS}. The numerical results in the following subsections will show the difference in prices, runtimes and sample sizes.
+\begin{table}[h]
+ \caption{Mean shifts for importance sampling} % title of the table
+ \centering                          % centering table
+ \begin{tabular}{lccc}          % creating eight columns
+ \hline\hline                        % inserting double-line
+  & European Call (EC) & European Put (EP) & American Put (AP)\\ [0.5ex]
+ \hline                                      % inserts single-line
+ IID Sampling & 2 & -0.8 & -0.8 \\
+ Sobol Sequences & 1 & -1 & -0.6 \\[1ex] % [1ex] adds vertical space
+ \hline                                       % inserts single-line
+ \end{tabular}
+ \label{tab:params setup for IS}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Simulations with IID sampling}
+First we test our modified QE scheme with i.i.d.\ sampling.
+ \begin{table}[h]
+\caption{Test of option price with IID\_MC}
+\centering
+%\begin{adjustwidth}{-1cm}{}
+\begin{threeparttable}
+\resizebox{\columnwidth}{!}{%
+ \begin{tabular}{lccccccccc}
+\hline\hline
+\multirow{2}{*}{Option} & \multicolumn{3}{c}{Price (relTol=0.01)}&\multicolumn{3}{c}{Time (s)}&\multicolumn{3}{c}{Sample Size}  \\
+\cline{2-10}
+& K=20 & K=60 & K=100 & K=20 & K=60 & K=100 & K=20 & K=60 & K=100 \\
+\hline
+ECQE\tnote{a} & 42.728 & 23.464 & 14.218 & 3.19 & 3.19 & 3.22 & 1.00e+6 & 1.00e+6 & 1.00e+6 \\
+ECw/oIS & 42.750 & 23.497 & 14.196 & 8.22 & 18.40 & 30.34 & 1.06e+6 & 2.35e+6 & 3.85e+6 \\
+ECw/IS & - & 23.493 & 14.210 & - & 4.85 & 4.67 & - & 6.27e+5 & 6.04e+5 \\
+\hline
+EPQE\tnote{a} & 2.782 & 23.498 & 54.255 & 3.18 & 3.18 & 3.19 & 1.00e+6 & 1.00e+6 & 1.00e+6 \\
+EPw/oIS & 2.772 & 23.460 & 54.141 & 9.40 & 3.07 & 1.78 & 1.21e+6 & 4.03e+5 & 2.41e+5 \\
+EPw/IS & 2.773 & 23.493 & - & 5.14 & 2.21 & - & 6.52e+5 & 2.94e+5 & - \\
+APw/oIS & 2.771 & 23.476 & 54.176 & 9.95 & 3.90 & 2.44 & 1.13e+6 & 3.82e+5 & 2.25e+5 \\
+APw/IS & 2.775 & 23.460 & - & 6.78 & 3.86 & - & 7.07e+5 & 3.80e+5 & - \\
+[1ex]
+\hline
+\end{tabular}}
+\begin{tablenotes}
+  \item[a] This is calculated by the original QE scheme without guaranteed error tolerance.
+\end{tablenotes}
+\end{threeparttable}
+%\end{adjustwidth}
+\label{table:IID nu=0.4}
+\end{table}
+Since American call option is never optimal to exercise early, it is just like European call option. So, we omit the test for it. The test results for European call/put option and American put option are shown in Table \ref{table:IID nu=0.4}. The ECQE (EPQE) means European call (put) option calculated by the original QE scheme. The EC/EP means European call/ put option. The AP is short for American put option. Since American call option is just like European call option, The IS is short for importance sampling.
+
+After applying importance sampling to at the money and out of the money options, the average runtimes are reduced, especially for European call option. The average runtime is nearly a constant rather than significant correlated to strike prices. The average prices calculated with different schemes are very close for the same option with the same strike price. Our modified QE scheme gives approximation within user-defined error tolerance with constant runtime and as fast as the original QE scheme.
+
+\subsubsection{Simulations with Sobol sequences}
+Sobol sequences is a commonly used low-discrepancy sequences and is one of the sampling methods implemented in GAIL. For Sobol sequences, the time step size relax to $\Delta = 0.5$. The average runtimes are about 1/100 of those for i.i.d.\  sampling for the same relative error tolerance 1\%. So, in Table \ref{table:Sobol nu=0.4}, we change the relative error tolerance to 0.1\%. However, when we try various mean shifts for American put option, there is no obvious reduction in runtime. This is might because that the sample size of the Sobol sequences is a factor of 2. We don't have a good explanation for this now.
+\begin{table}[h]
+\caption{Test of option price with  Sobol' points}
+\centering
+%\begin{adjustwidth}{-1cm}{}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lccccccccc}
+\hline\hline
+\multirow{2}{*}{Option} & \multicolumn{3}{c}{Price (relTol=0.01)}&\multicolumn{3}{c}{Time (s)}&\multicolumn{3}{c}{Sample Size}  \\
+\cline{2-10}
+& K=20 & K=60 & K=100 & K=20 & K=60 & K=100 & K=20 & K=60 & K=100 \\
+\hline
+ECw/oIS & 42.798 & 23.502 & 14.230 & 0.40 & 0.87 & 2.30 & 1.31e+05 & 2.62e+05 & 6.29e+05 \\
+ECw/IS & - & 23.501 & 14.230 & - & 0.20 & 0.40 & - & 6.55e+04 & 1.31e+05 \\
+EPw/oIS & 2.771 & 23.473 & 54.187 & 0.39 & 0.06 & 0.04 & 1.31e+05 & 1.64e+04 & 9.83e+03 \\
+EPw/IS & 2.777 & - & - & 0.20 & - & - & 6.55e+04 & - & - \\
+APw/oIS & 2.779 & 23.444 & 54.306 & 1.01 & 0.31 & 0.17 & 1.31e+05 & 3.28e+04 & 1.64e+04 \\
+APw/IS & 2.774 & - & - & 1.05 & - & - & 1.31e+05 & - & - \\
+[1ex]
+\hline
+\end{tabular}}
+%\end{adjustwidth}
+\label{table:Sobol nu=0.4}
+\end{table}
+
+We apply importance sampling to at the money and out of the money call option, and out of the money put option. The average runtimes for at the money European call options are reduced four times and for out of the money European call options are reduced five times. The average runtimes of out of the money European put option are reduced to a half of that without importance sampling. Though Sobol sequences is a very efficient way of sampling without importance sampling, the reduction in runtime will be more obvious when calculating a large number of options. Therefore, the test results show that our modified QE scheme gives fast and accurate approximation using Sobol sequences in GAIL, which also satisfies user-defined error tolerance.
 
 \section{Discussion}
 
@@ -672,47 +859,40 @@ For $K_3\hat{V}(t)+K_4\hat{V}(t+\Delta)$, it is the same as QE scheme without ma
 %f(j\delta, i\delta) \cong \frac{\pi}{M} \sum^M_{n-1}
 %Q_{\theta_n} (j\cos \theta_n + i\sin \theta_n)\, .\label{appeqn}
 %\end{equation}
-Recall the process
+We want to show the error of our approximation for $ \int_{t}^{t+\Delta}V_u\,\d u$ is $o(\nu\Delta)$. Recall the process
 \begin{equation*}
-  \d V_t = \kappa(\theta-V_t)\d t +\nu\sqrt{V_t}\d W_t\text{,} \quad V_0 \text{ given},
+  \,\d V_t = \kappa(\theta-V_t)\,\d t +\nu\sqrt{V_t}\,\d W_t\text{,} \quad V_0 \text{ given},
 \end{equation*}
-defined in \eqref{eq2}.
-Let $U_t$ satisfy a similar stochastic differential equation:
+defined in \eqref{eq2}. It is not easy to prove directly from process V. So, we define a new process U and let $U_t$ satisfy a similar stochastic differential equation:
 \begin{equation*}
   \,\d U_t = -\kappa U_t\,\d t + \nu\sqrt{V_t}\,\d W_t\text{,} \quad U_0 = 0.\numberthis\label{appeqnV_t}
 \end{equation*}
-Let $Y_t=V_t-U_t$, and note that $Y_t$ satisfies a \emph{deterministic} equation:
+Let $Y_t=V_t-U_t$, and note that $Y_t$ satisfies a differential equation:
 \begin{equation*}
   %\d (V_t-U_t) = \kappa(\theta-(V_t-U_t))\d t .
   \d Y_t = \kappa(\theta-Y_t)\,\d t, \quad Y_0 = V_0.
 \end{equation*}
-Moreover, $Y_t=V_t$ when $\nu = 0$. So, we apply similar deduction to $Y_t$ as in section \ref{se:findGamma}:
-\begin{align*}
+Moreover, $Y_t=V_t$ when $\nu = 0$. So, we apply similar deduction to $Y_t$ as in Section \ref{se:findGamma}:
 %\d Y_t &=\kappa(\theta-Y_t)\d t\\
 %\frac{\d Y_t}{\theta-Y_t} &=\kappa \d t\\
 %%-\ln(\theta-Y_t) &=\kappa t+C_1\\
-Y_t &=\theta+(Y_0-\theta)e^{-\kappa t}\\
-Y_{t+\Delta} &=\theta+(Y_0-\theta)e^{-\kappa (t+\Delta)}
-\end{align*}
-From the result in Section \ref{se:findGamma}, we have $\theta=\frac{Y_t-e^{\kappa\Delta}Y_{t+\Delta}}{1-e^{\kappa\Delta}}$.
 \begin{align*}
-   \int^{t+\Delta}_t Y_u\d u %& =\theta\Delta+(Y_0-\theta)\int^{t+\Delta}_t e^{-\kappa u}\d u \\
-    & =\theta\Delta+\frac{(Y_0-\theta)e^{-\kappa t}-(Y_0-\theta)e^{-\kappa (t+\Delta)}}{\kappa}\\
-    &= \Delta[\gamma Y_t+(1-\gamma)Y_{t+\Delta}]
-  \end{align*}
+   \int^{t+\Delta}_t Y_u\,\d u %& =\theta\Delta+(Y_0-\theta)\int^{t+\Delta}_t e^{-\kappa u}\,\d u \\
+    %& =\theta\Delta+\frac{(Y_0-\theta)e^{-\kappa t}-(Y_0-\theta)e^{-\kappa (t+\Delta)}}{\kappa}\\
+    &= \Delta[\gamma Y_t+(1-\gamma)Y_{t+\Delta}],
+\end{align*}
 where $\gamma = (1-e^{\kappa\Delta}+\kappa\Delta)\big/\kappa\Delta(1-e^{\kappa\Delta})$.
 %\begin{equation*}
-% \int_{t}^{t+\Delta}(V_u-U_u)\d u =\int^{t+\Delta}_t Y_u\d u= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
+% \int_{t}^{t+\Delta}(V_u-U_u)\,\d u =\int^{t+\Delta}_t Y_u\,\d u= \Delta(\gamma_1Y_t+(1-\gamma_1)Y_{t+\Delta})
 %\end{equation*}
 %where $\gamma_1$ and $(1-\gamma)$ are the same as in Section 3.1.1.\\
 Now we have the integral of $V_t$ written in terms of $V$ and $U$ as follows:
-\begin{equation}\label{intV_U}
-\begin{split}
-   \int_{t}^{t+\Delta}V_u\,\d u &= \int_{t}^{t+\Delta}(Y_u+U_u)\,\d u\\ &=\Delta[\gamma Y_t+(1-\gamma )Y_{t+\Delta}]+\int_{t}^{t+\Delta}U_u\,\d u\\
-   &=\Delta[\gamma  V_t+(1-\gamma ) V_{t+\Delta}]-\bigg\{\Delta[\gamma  U_t+(1-\gamma ) U_{t+\Delta}]-\int_{t}^{t+\Delta}U_u\,\d u\bigg\}.
-\end{split}
-\end{equation}
-Our problem is to show that the error in approximating $\int_{t}^{t+\Delta}U_u\,\d u$ by $\Delta[\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta}]$ is $o(\nu\Delta)$.
+\begin{align*}
+   \int_{t}^{t+\Delta}V_u\,\d u &= \int_{t}^{t+\Delta}(Y_u+U_u)\,\d u\\ 
+   %&=\Delta[\gamma Y_t+(1-\gamma )Y_{t+\Delta}]+\int_{t}^{t+\Delta}U_u\,\d u\\
+   &=\Delta[\gamma  V_t+(1-\gamma ) V_{t+\Delta}]-\bigg\{\Delta[\gamma  U_t+(1-\gamma ) U_{t+\Delta}]-\int_{t}^{t+\Delta}U_u\,\d u\bigg\}.\numberthis\label{intV_U}
+\end{align*}
+Our problem is to show that the error in approximating $\int_{t}^{t+\Delta}U_u\,\d u$ by\\ $\Delta[\gamma_1 U_t+(1-\gamma_1) U_{t+\Delta}]$ is $o(\nu\Delta)$.
 
 We can write the solution of $U_t$ as
 %\begin{equation*}
@@ -727,7 +907,7 @@ We can write the solution of $U_t$ as
   %f_t & = \nu\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\,\d W_s \\
   U_t & = \nu e^{-\kappa t}\int_{0}^{t}e^{\kappa s}\sqrt{V_s}\,\d W_s.
 \end{align*}
-Now we rewrite the integral of $U_t$ by using integration by parts twice:
+Now we rewrite the integral of $U_t$ by using integration by parts twice and \eqref{appeqnV_t}:
 \begin{align*}
   \int_{t}^{t+\Delta}U_u\,\d u %& = \int_{t}^{t+\Delta}U_u\,\d (u-t-\Delta\gamma_1) \\
    & = U_u(u-t-\Delta\gamma)\big|_t^{t+\Delta}-\int_{t}^{t+\Delta}(u-t-\Delta\gamma)\,\d U_u \\
@@ -738,18 +918,18 @@ Now we rewrite the integral of $U_t$ by using integration by parts twice:
  % \int_{t}^{t+\Delta}U_u\,\d u
  %& = U_{t+\Delta}(t+\Delta-t-\Delta\gamma_1)-U_{t}(-\Delta\gamma_1)-\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\,\d u\\
  % & -\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\,\d W_u \\
-   & = \Delta\big[\gamma U_t+(1-\gamma ) U_{t+\Delta}\big]+\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\kappa U_u\,\d u\\
-   &\quad\quad-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\,\d W_u\\%\numberthis\label{appeqnU_t}
-   %& = \Delta\big(\gamma U_t+(1-\gamma ) U_{t+\Delta}\big)+\int_{t}^{t+\Delta}\kappa U_u\,\d \big(\frac{(u-t-\Delta\gamma )^2}{2}-\frac{\Delta^2\gamma ^2}{2}\big)\\
-   %&\quad\quad-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\,\d W_u\\
-   & = \Delta\big[\gamma U_t+(1-\gamma ) U_{t+\Delta}\big]+\frac{1}{2}\kappa U_{u}\big[{(u-t-\Delta\gamma )^2}-{\Delta^2\gamma ^2}\big]\big|_t^{t+\Delta}\\
-   &\quad\quad- \int_{t}^{t+\Delta}\frac{1}{2}\big[(u-t-\Delta\gamma )^2-\Delta^2\gamma ^2\big] \kappa\,\d U_u\\
-   &\quad\quad-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\,\d W_u\\
+%& = \Delta\big[\gamma U_t+(1-\gamma ) U_{t+\Delta}\big]+\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\kappa U_u\,\d u\\
+%   &\quad\quad-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\,\d W_u\\%\numberthis\label{appeqnU_t}
+%   %& = \Delta\big(\gamma U_t+(1-\gamma ) U_{t+\Delta}\big)+\int_{t}^{t+\Delta}\kappa U_u\,\d \big(\frac{(u-t-\Delta\gamma )^2}{2}-\frac{\Delta^2\gamma ^2}{2}\big)\\
+%   %&\quad\quad-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\,\d W_u\\
+%   & = \Delta\big[\gamma U_t+(1-\gamma ) U_{t+\Delta}\big]+\frac{1}{2}\kappa U_{u}\big[{(u-t-\Delta\gamma )^2}-{\Delta^2\gamma ^2}\big]\big|_t^{t+\Delta}\\
+%   &\quad\quad- \int_{t}^{t+\Delta}\frac{1}{2}\big[(u-t-\Delta\gamma )^2-\Delta^2\gamma ^2\big] \kappa\,\d U_u\\
+%   &\quad\quad-\nu\int_{t}^{t+\Delta}(u-t-\Delta\gamma )\sqrt{V_u}\,\d W_u\\
    & = \Delta\big[\gamma U_t+(1-\gamma ) U_{t+\Delta}\big]+\kappa U_{t+\Delta}\Delta^2\bigg(\frac{1}{2}-\gamma \bigg)\\
    &\quad\quad+\int_{t}^{t+\Delta}(u-t)\bigg[\frac{(u-t)}{2}-\Delta\gamma \bigg]\kappa^2U_u\,\d u\\
-   &\quad\quad-\nu\int_{t}^{t+\Delta}h(u)\sqrt{V_u}\,\d W_u\numberthis\label{appeqnU_t}
+   &\quad\quad-\nu\int_{t}^{t+\Delta}h(u)\sqrt{V_u}\,\d W_u,\numberthis\label{appeqnU_t}
 \end{align*}
-where $h(u) =\kappa(u-t)\big[\frac{(u-t)}{2}-\Delta\gamma \big]+u-t-\Delta\gamma$.
+where $h(u) =\kappa(u-t)\big[{(u-t)}/{2}-\Delta\gamma \big]+u-t-\Delta\gamma$.
 %\begin{align*}
 %   \int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)(-\kappa U_u)\,\d u & = \int_{t}^{t+\Delta}\frac{1}{2}(-\kappa U_u)\,\d (u-t-\Delta\gamma_1)^2\\
 %   & = -\int_{t}^{t+\Delta}\kappa U_u\,\d \big(\frac{(u-t-\Delta\gamma_1)^2}{2}-\frac{\Delta^2\gamma_1^2}{2}\big)\\
@@ -770,41 +950,50 @@ where $h(u) =\kappa(u-t)\big[\frac{(u-t)}{2}-\Delta\gamma \big]+u-t-\Delta\gamma
 %\end{align*}
 Since $U_t=O(\nu)$, it is easy to see that the second term in \eqref{appeqnU_t} is $O(\nu\Delta^2)$. By H\"older's inequality, the third term of \eqref{appeqnU_t} is
 \begin{align*}
-   &\,\, \int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)\kappa^2U_u\,\d u \\
-   \leq&\,\, \Delta\gamma \kappa^2\sqrt{\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)^2\,\d u\int_{t}^{t+\Delta}U_u^2\,\d u}\\
-    = &\,\,O(\nu\Delta^2).
+   & \int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)\kappa^2U_u\,\d u \\
+   &\quad\quad\leq\,\, \Delta\gamma \kappa^2\sqrt{\int_{t}^{t+\Delta}\bigg(\frac{(u-t)^2}{2}-(u-t)\Delta\gamma \bigg)^2\,\d u\int_{t}^{t+\Delta}U_u^2\,\d u}\\
+   &\quad\quad = \,\,O(\nu\Delta^3).
 \end{align*}
-Now we want to show that the last term of \eqref{appeqnU_t} is $O(\nu\Delta^{1.5})$.
-
-Let $$I =\nu\int_{t}^{t+\Delta}h(u)\sqrt{V_u}\,\d W_u,$$
-by Theorem 4.7 of \cite{Klebaner2005}, It\^o integral $I$ is a continuous zero mean square integrable martingale.  Since $V_t$ is a Cox-Ingersoll-Ross process, we know that its expectation given $V_0$ is $\mathbb{E}(V_t)=V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})$\cite{Dufresne2001}, which is O(1). Thus, by the It\^o isometry,
+Now we want to show that $$I =\nu\int_{t}^{t+\Delta}h(u)\sqrt{V_u}\,\d W_u=O(\nu\Delta^{1.5}).$$
+Since $V_t$ is a Cox-Ingersoll-Ross process, we know that its expectation given $V_0$ is $\mathbb{E}(V_t)=V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})$ \cite{Dufresne2001}, which is O(1). Also, since $\max\limits_{t\leq u\leq t+\Delta}|h(u)|=O(\Delta)$,
+\begin{equation*}
+\begin{split}
+\mathbb{E}\bigg(\nu^2 \int_{t}^{t+\Delta}[h(u)]^2 V_u\,\d u\bigg)  &=\nu^2\int_{t}^{t+\Delta}[h(u)]^2 \mathbb{E}(V_u)\,\d u\\
+&=\nu^2\int_{t}^{t+\Delta}O(\Delta^2)\,\d u\\
+&=O(\nu^2\Delta^3)\\
+&<\infty,
+\end{split}
+\end{equation*}
+we have $I\in\cL^2$ and $I$ is an It\^o integral.
+By Theorem 4.7 of \cite{Klebaner2005}, It\^o integral $I$ is a continuous zero mean square integrable martingale.   Thus, by the It\^o isometry,
 \begin{align*}
  %\mathbb{E}(I)&= 0\\
-  \text{Var}(I)%&= \mathbb{E}(I^2) \\
+  \text{Var}(I)&= \mathbb{E}(I^2)-[\mathbb{E}(I)]^2 \\
   &= \mathbb{E}\bigg(\nu^2 \int_{t}^{t+\Delta}[h(u)]^2 V_u\,\d u\bigg)\\
-  &=\nu^2\int_{t}^{t+\Delta}[h(u)]^2 \mathbb{E}(V_u)\,\d u\\
+  %&=\nu^2\int_{t}^{t+\Delta}[h(u)]^2 \mathbb{E}(V_u)\,\d u\\
  % &=\nu^2\int_{t}^{t+\Delta}\big(\frac{(u-t)^2}{2}-\Delta\gamma_1(u-t)\big)^2\kappa^2 \mathbb{E}(V_u)\,\d u\\
 %  &=\kappa^2\nu^2\bigg[\int_{t}^{t+\Delta}\frac{1}{20} (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})) \,\d (u-t)^5\\
 %  &-\int_{t}^{t+\Delta}\frac{1}{4}\Delta\gamma_1 (V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u}))\,\d (u-t)^4\\
 %  &+\int_{t}^{t+\Delta}\frac{\Delta^2}{3}\gamma_1^2(V_0 e^{-\kappa u}+\theta(1-e^{-\kappa u})) \,\d(u-t)^3\bigg]\\
 %  &=\kappa^2\nu^2 \Delta^5\bigg(\frac{1}{20}(V_0 e^{-\kappa (\xi^\frac{1}{5}+t)}+\theta(1-e^{-\kappa (\xi^\frac{1}{5}+t)})-\frac{1}{4}\gamma_1(V_0 e^{-\kappa (\xi^\frac{1}{4}+t)}+\theta(1-e^{-\kappa (\xi^\frac{1}{4}+t)})\\
 %  &+\frac{1}{3}\gamma_1^2(V_0 e^{-\kappa (\xi^\frac{1}{3}+t)}+\theta(1-e^{-\kappa(\xi^\frac{1}{3}+t)}))\bigg)
-&=\nu^2\int_{t}^{t+\Delta}O(\Delta^2)\,\d u\\
-&=O(\nu^2\Delta^3)
+%&=\nu^2\int_{t}^{t+\Delta}O(\Delta^2)\,\d u\\
+&=O(\nu^2\Delta^3).
 \end{align*}
 %where $\xi\in[t,t+\Delta]$.\\
 %Therefore, I is a normal random variable with mean zero and variance of order $O(\nu^2\Delta^5)$. I is of order $O(\nu\Delta^{2.5})$.\\
 %Similarly, for the third term of Equation \ref{appeqnU_t}, Ito integral $\int_{t}^{t+\Delta}(u-t-\Delta\gamma_1)\nu\sqrt{V_u}\,\d W_u$ is also a normal distributed random variable with mean zero and variance of order $O(\nu^2\Delta^{3})$.
-since $\max\limits_{t\leq u\leq t+\Delta}|h(u)|=O(\Delta)$.
-So, $I$ is a normal distributed random variable with mean zero and variance of order $O(\nu^2\Delta^{3})$. The Ito integral $I$ is $O(\nu\Delta^{1.5})$.
+So, $I$ is a normal distributed random variable with mean zero and variance of order $O(\nu^2\Delta^{3})$. The It\^o integral $I$ is $O(\nu\Delta^{1.5})$.
 This implies that
 \begin{equation*}
    \int_{t}^{t+\Delta}U_u\,\d u = \Delta\big(\gamma U_t+(1-\gamma) U_{t+\Delta}\big)+O(\nu\Delta^{1.5})
 \end{equation*}
-in distribution and so by \eqref{intV_U}
+in distribution, and so by \eqref{intV_U}
 \begin{equation*}
-    \int_{t}^{t+\Delta}V_u\,\d u=\Delta\big(\gamma V_t+(1-\gamma) V_{t+\Delta}\big)+O(\nu\Delta^{1.5}).
+    \int_{t}^{t+\Delta}V_u\,\d u=\Delta\big(\gamma V_t+(1-\gamma) V_{t+\Delta}\big)+O(\nu\Delta^{1.5}),
 \end{equation*}
+also in distribution.
+
 \section*{Acknowledgments}
 %This section should come before the References. Funding
 %information may also be included here.
