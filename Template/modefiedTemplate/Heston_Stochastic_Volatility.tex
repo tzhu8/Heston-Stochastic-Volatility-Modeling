@@ -22,6 +22,8 @@
 \usepackage{multirow}
 \usepackage{threeparttable}
 
+
+
 \begin{document}
 
 \markboth{Authors' Names}
@@ -35,24 +37,23 @@
 10~pt Times Roman uppercase and boldface. Please write
 down in pencil a short title to be used as the running head.}}
 
-\author{Xiaoyang Zhao, Tianci Zhu and Fred J. Hickernell\footnote{Typeset names in 8~pt Times Roman, uppercase and lightface.  Use footnotes only to indicate if permanent and present addresses are different. Funding information should go in the Acknowledgement section.}}
+\author{Xiaoyang Zhao\footnote{xzhao31@hawk.iit.edu}, Tianci Zhu\footnote{tianci.zhu26@gmail.com} and Fred J. Hickernel\footnote{hickernell@iit.edu, 312.567.8983}l\footnote{Typeset names in 8~pt Times Roman, uppercase and lightface.  Use footnotes only to indicate if permanent and present addresses are different. Funding information should go in the Acknowledgement section.}}
 
-\address{Full affiliations\footnote{Typeset
+\address{\footnote{Typeset
 affiliation and mailing addresses in 8pt Times italic.} \\
-,mailing addresses and telephone number}
+10 W. 32rd Street, Chicago IL 60616\\Department of Applied Mathematics\\Illinois Institute of Technology}
 
-\author{OTHER D. AUTHOR}
+%\author{OTHER D. AUTHOR}
 
-\address{Full affiliations \\
-,mailing addresses and telephone number}
+%\address{Full affiliations \\
+%,mailing addresses and telephone number}
 
 \maketitle
 
 \begin{abstract}
-Include a one-paragraph abstract of no more than 100 words. Do not include references, footnotes, or abbreviations in the abstract. Typeset the
-abstract in 8 pt Times Roman with baselineskip of 10 pt, making
-an indentation of $\frac14$ inch on the left and right margins.
-Typeset similarly for keywords below.
+ The Quadratic Exponential (QE) model is a market standard simulation method for the Heston stochastic volatility model. We identify certain numerical problems with the standard discretization and modify the original method to correct these problems. We implement our modified QE scheme for the Heston model in the Guaranteed Automatic Integration Library (GAIL)---a suite of algorithms that includes Monte Carlo and quasi-Monte Carlo methods for multidimensional integration and computation of means. GAIL computes answers to satisfy user-defined error tolerances. We also implement variance reduction techniques for our modified QE scheme in GAIL. The numerical results show that our modified scheme is fast and accurate, and satisfies the user-defined error tolerances.
+
+%Include a one-paragraph abstract of no more than 100 words. Do not include references, footnotes, or abbreviations in the abstract. Typeset the abstract in 8 pt Times Roman with baselineskip of 10 pt, making an indentation of $\frac14$ inch on the left and right margins. Typeset similarly for keywords below.
 \end{abstract}
 
 \keywords{ Enclose with each manuscript, on a separate page, from three to five keywords. }
@@ -110,7 +111,7 @@ We apply the Quadratic Exponential Scheme illustrated in Andersen (2006) \cite{A
 \end{align*}
 \item Compute $\psi=s^2/m^2$.
 \item Draw a uniform random number $U_V$.
-\item If $\psi\leq\psi_c$:
+\item If $\psi\leq1.5$\footnote{The constant $1.5$ is a typical value allowed in the QE scheme. The exact choice for this constant doesn't effect the quality of the overall simulation significantly \cite{Andersen2006}. }:
 \begin{enumerate}
 \item Compute $a$ and $b$ from following equations
 \begin{align*}
@@ -119,7 +120,7 @@ b^2=2\psi^{-1}-1+\sqrt{2\psi^{-1}}\sqrt{2\psi^{-1}-1}\geq 0, \qquad a =\frac{m}{
 \item Compute $Z_V=\Phi^{-1}(U_V)$, where $Phi$ is the standard normal distribution function.
 \item Set $\hat{V}_{t+\Delta}=a(b+Z_V)^2$.
 \end{enumerate}
-\item Otherwise, if $\psi>\psi_c$
+\item Otherwise, if $\psi>1.5$:
 \begin{enumerate}
   \item Compute $\beta$ and $p$ according to equations
   \begin{align*}
@@ -660,7 +661,7 @@ Then,
 %  &K_0^*+K_1\hat{V}(t)+K_2\hat{V}(t+\Delta)\\
   =&\frac{\frac{1}{2}(1-\gamma)\Delta\rho^2(\theta+\tilde{V}_{t+\Delta})}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\{\rho[(1-\gamma)\Delta\kappa+1]-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big\}}\\
   &+\frac{\mathring{V}_{t+\Delta}\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\{\rho[(1-\gamma)\Delta\kappa+1]-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big\}}\\
-  &+\frac{1}{2}\ln(1-2\nu\tilde{A}\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}_t)-\frac{1}{2}(1-\gamma)\Delta(\theta+\tilde{V}_{t+\Delta})\\
+  &+\frac{1}{2}\ln(1-2\nu A\tilde{a})-\frac{1}{2}\gamma_1\Delta(1-\rho^2)(\theta+\tilde{V}_t)-\frac{1}{2}(1-\gamma)\Delta(\theta+\tilde{V}_{t+\Delta})\\
   &+\rho\big((1-\gamma)\Delta\kappa+1\big)(\theta+\tilde{V}_{t+\Delta})\frac{\nu\tilde{b}^{-2}-2\tilde{b}^{-2}m\big[\rho\big((1-\gamma)\Delta\kappa+1\big)-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big]}{1+\nu^2\tilde{b}^{-2}-2\nu\tilde{b}^{-2}m\{\rho[(1-\gamma)\Delta\kappa+1]-\frac{1}{2}(1-\gamma)\Delta\nu\rho^2\big\}}.
 %\end{align*}
 \end{split}
