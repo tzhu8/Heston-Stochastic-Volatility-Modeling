@@ -669,7 +669,7 @@ Then,
 For $K_3\hat{V}_t+K_4\hat{V}_{t+\Delta}$, it is the same as the Broadie-Kaya discretization scheme without martingale correction.\\
 
 \section{Determining the Number of Samples Required to Meet a Specified Error Tolerance}
-
+As we mentioned in the introduction, this modified algorithm is implemented in GAIL, which automatically determines the number of samples required to meet a specified error tolerance. The detailed algorithm proofs are illustrated in the \cite{Lan}. We only give a brief introduction of the procedure here. In the first stage, an initial independent identical distributed sample $Y_1$,..., $Y_{n_\sigma}$ is used to estimate the variance of the random variable $Y$. Then, the Berry-Esseen inequality is used to determine the sample size $n_\mu$ and generate sample $Y_{n_\sigma+1}$, ..., $Y_{n_\sigma+n_mu}$, which is independent of $Y$ as well as $Y_1$,..., $Y_{n_\sigma}$ in the second stage. 
 
 
 \section{Numerical Examples}
