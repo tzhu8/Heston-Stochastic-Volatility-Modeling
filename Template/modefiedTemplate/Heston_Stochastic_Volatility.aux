@@ -16,63 +16,123 @@
 \gdef\HyperFirstAtBeginDocument#1{#1}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{Andersen2006}
+\citation{HullWhite1987}
+\citation{ScottChesney1989}
+\citation{Heston1993}
+\citation{SABR2002}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}}
-\citation{Andersen}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Options Modeled by the Heston Stochastic Volatility Model}{2}{section.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Heston Model}{2}{subsection.2.1}}
-\newlabel{eq1}{{2.1}{2}{Heston Model}{equation.2.1}{}}
-\newlabel{eq1@cref}{{[equation][1][2]2.1}{2}}
-\newlabel{eq2}{{2.2}{2}{Heston Model}{equation.2.2}{}}
-\newlabel{eq2@cref}{{[equation][2][2]2.2}{2}}
-\newlabel{logX}{{2.3}{2}{Heston Model}{equation.2.3}{}}
-\newlabel{logX@cref}{{[equation][3][2]2.3}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Quadratic Exponential Scheme for Stochastic Volatility}{2}{subsection.2.2}}
 \citation{Andersen2006}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Broadie-Kaya Discretization Scheme for the Asset Prices}{3}{subsection.2.3}}
-\newlabel{dW_V}{{2.4}{3}{Broadie-Kaya Discretization Scheme for the Asset Prices}{equation.2.4}{}}
+\citation{Heston1993}
+\citation{Andersen}
+\citation{Andersen2006}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Options Modeled by the Heston Stochastic Volatility Model}{2}{section.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}The Heston model}{2}{subsection.2.1}}
+\newlabel{eq1}{{2.1}{2}{The Heston model}{equation.2.1}{}}
+\newlabel{eq1@cref}{{[equation][1][2]2.1}{2}}
+\newlabel{eq2}{{2.2}{2}{The Heston model}{equation.2.2}{}}
+\newlabel{eq2@cref}{{[equation][2][2]2.2}{2}}
+\newlabel{logX}{{2.3}{2}{The Heston model}{equation.2.3}{}}
+\newlabel{logX@cref}{{[equation][3][2]2.3}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}The quadratic exponential scheme for stochastic volatility}{2}{subsection.2.2}}
+\newlabel{se:QE}{{2.2}{2}{The quadratic exponential scheme for stochastic volatility}{subsection.2.2}{}}
+\newlabel{se:QE@cref}{{[subsection][2][2]2.2}{2}}
+\citation{Andersen2006}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}The Broadie-Kaya discretization scheme for the asset price process}{3}{subsection.2.3}}
+\newlabel{dW_V}{{2.4}{3}{The Broadie-Kaya discretization scheme for the asset price process}{equation.2.4}{}}
 \newlabel{dW_V@cref}{{[equation][4][2]2.4}{3}}
-\newlabel{lnX}{{2.5}{3}{Broadie-Kaya Discretization Scheme for the Asset Prices}{equation.2.5}{}}
+\newlabel{lnX}{{2.5}{3}{The Broadie-Kaya discretization scheme for the asset price process}{equation.2.5}{}}
 \newlabel{lnX@cref}{{[equation][5][2]2.5}{3}}
-\newlabel{approx_du}{{2.6}{3}{Broadie-Kaya Discretization Scheme for the Asset Prices}{equation.2.6}{}}
-\newlabel{approx_du@cref}{{[equation][6][2]2.6}{3}}
-\newlabel{eq3}{{2.7}{4}{Broadie-Kaya Discretization Scheme for the Asset Prices}{equation.2.7}{}}
-\newlabel{eq3@cref}{{[equation][7][2]2.7}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Implementation steps}{4}{subsubsection.2.3.1}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Overcoming Numerical Errors for Small Volatility of Volatility}{4}{section.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Modification of QE scheme without martingale correction}{4}{subsection.3.1}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces European call option price calculated by QE scheme and our modified QE scheme. Initial price $=80$, strike $=100$, interest $=0$, $\kappa =1$, $\nu =0.5$, $\rho =-0.3$, $\theta =0.09$ and $V_0=0.36$. Small circles denote the price calculated by our modified QE scheme when the relative tolerance = 0.01 was met. The stars denote the price calculated by original QE scheme. The dot-dashed line denotes the option price calculated by Black-Scholes formula when $\nu =0$. The dashed line at the bottom denotes the option price given by QE scheme when $\nu =0$. }}{5}{figure.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}Find more exact $\gamma _1$ and $\gamma _2$}{5}{subsubsection.3.1.1}}
-\newlabel{V nu=0}{{3.1}{5}{Find more exact $\gamma _1$ and $\gamma _2$}{equation.3.1}{}}
-\newlabel{V nu=0@cref}{{[equation][1][3]3.1}{5}}
-\newlabel{int V}{{3.2}{6}{Find more exact $\gamma _1$ and $\gamma _2$}{equation.3.2}{}}
-\newlabel{int V@cref}{{[equation][2][3]3.2}{6}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}Change of variables}{6}{subsubsection.3.1.2}}
-\newlabel{QEK0K1K2}{{3.3}{7}{Change of variables}{equation.3.3}{}}
-\newlabel{QEK0K1K2@cref}{{[equation][3][3]3.3}{7}}
-\newlabel{QEK3K4}{{{3.4}}{7}{Change of variables}{AMS.2}{}}
-\newlabel{QEK3K4@cref}{{[equation][2147483647][]{3.4}}{7}}
-\newlabel{newLnX}{{3.5}{8}{Change of variables}{equation.3.5}{}}
-\newlabel{newLnX@cref}{{[equation][5][3]3.5}{8}}
-\newlabel{newLnX2}{{3.6}{8}{Change of variables}{equation.3.6}{}}
-\newlabel{newLnX2@cref}{{[equation][6][3]3.6}{8}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}The new algorithm for modified QE scheme and the discretization scheme of $X$}{8}{subsubsection.3.1.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}QE scheme with martingale correction}{9}{subsection.3.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Cancel out $\frac  {1}{\nu }$ in the expression of $\qopname  \relax o{ln}X$}{9}{subsubsection.3.2.1}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Determining the Number of Samples Required to Meet a Specified Error Tolerance}{9}{section.4}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Numerical Examples}{9}{section.5}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{9}{section.6}}
-\@writefile{toc}{\contentsline {section}{\numberline {Appendix\ A}Appendices}{10}{appendix.A}}
-\newlabel{sec:AppendixA}{{Appendix\ A}{10}{Appendices}{appendix.A}{}}
-\newlabel{sec:AppendixA@cref}{{[appendix][1][2147483647]Appendix\ A}{10}}
-\newlabel{appeqnV_t}{{{A.1}}{10}{Appendices}{AMS.3}{}}
-\newlabel{appeqnV_t@cref}{{[equation][2147483647][]{A.1}}{10}}
+\citation{Andersen2006}
+\newlabel{approx_du}{{2.6}{4}{The Broadie-Kaya discretization scheme for the asset price process}{equation.2.6}{}}
+\newlabel{approx_du@cref}{{[equation][6][2]2.6}{4}}
+\newlabel{approxIntV}{{2.7}{4}{The Broadie-Kaya discretization scheme for the asset price process}{equation.2.7}{}}
+\newlabel{approxIntV@cref}{{[equation][7][2]2.7}{4}}
+\newlabel{eq3}{{2.8}{4}{The Broadie-Kaya discretization scheme for the asset price process}{equation.2.8}{}}
+\newlabel{eq3@cref}{{[equation][8][2]2.8}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Martingale correction}{4}{subsection.2.4}}
+\newlabel{se:mtg correction}{{2.4}{4}{Martingale correction}{subsection.2.4}{}}
+\newlabel{se:mtg correction@cref}{{[subsection][4][2]2.4}{4}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Overcoming Numerical Errors for Small Volatility of Variance}{5}{section.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces European call option price calculate by the QE scheme and our modified QE scheme for an initial price of $\$80$, a strike price of $\$100$, zero interest rate, $T=2$, $\kappa =1$, $\rho =-0.3$, $\theta =0.09$, $V_0=0.36$ and relative tolerance of 1\%. Stars denote the prices calculated by our modified QE scheme when the relative tolerance of 1\% is met. Circles denote the prices calculated by the original QE scheme. The dashed line denotes the option price calculated by the Black-Scholes formula.}}{5}{figure.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{5}{subsection.3.1}}
+\newlabel{se:findGamma}{{3.1}{5}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{subsection.3.1}{}}
+\newlabel{se:findGamma@cref}{{[subsection][1][3]3.1}{5}}
+\newlabel{eq:InX_intV}{{3.1}{5}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{equation.3.1}{}}
+\newlabel{eq:InX_intV@cref}{{[equation][1][3]3.1}{5}}
+\newlabel{V nu=0}{{3.2}{6}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{equation.3.2}{}}
+\newlabel{V nu=0@cref}{{[equation][2][3]3.2}{6}}
+\newlabel{int V}{{3.3}{6}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{equation.3.3}{}}
+\newlabel{int V@cref}{{[equation][3][3]3.3}{6}}
+\newlabel{eq:gamma}{{3.4}{6}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{equation.3.4}{}}
+\newlabel{eq:gamma@cref}{{[equation][4][3]3.4}{6}}
+\newlabel{appeqnV_t}{{{3.5}}{6}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{AMS.1}{}}
+\newlabel{appeqnV_t@cref}{{[equation][2147483647][]{3.5}}{6}}
+\newlabel{intV_U}{{{3.6}}{6}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{AMS.3}{}}
+\newlabel{intV_U@cref}{{[equation][2147483647][]{3.6}}{6}}
+\citation{Dufresne2001}
 \citation{Klebaner2005}
-\newlabel{appeqnU_t}{{{A.2}}{11}{Appendices}{AMS.5}{}}
-\newlabel{appeqnU_t@cref}{{[equation][2147483647][]{A.2}}{11}}
+\newlabel{appeqnU_t}{{{3.7}}{7}{Finding a $\gamma $ that is accurate for the approximation of the time integral of V}{AMS.5}{}}
+\newlabel{appeqnU_t@cref}{{[equation][2147483647][]{3.7}}{7}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Change of variables to avoid overflow}{8}{subsection.3.2}}
+\newlabel{QEK0K1K2}{{3.8}{9}{Change of variables to avoid overflow}{equation.3.8}{}}
+\newlabel{QEK0K1K2@cref}{{[equation][8][3]3.8}{9}}
+\newlabel{QEK3K4}{{{3.9}}{9}{Change of variables to avoid overflow}{AMS.7}{}}
+\newlabel{QEK3K4@cref}{{[equation][2147483647][]{3.9}}{9}}
+\newlabel{newLnX}{{3.10}{9}{Change of variables to avoid overflow}{equation.3.10}{}}
+\newlabel{newLnX@cref}{{[equation][10][3]3.10}{9}}
+\newlabel{newLnX2}{{3.11}{9}{Change of variables to avoid overflow}{equation.3.11}{}}
+\newlabel{newLnX2@cref}{{[equation][11][3]3.11}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}The modified QE and Broadie-Kaya discretization scheme}{9}{subsection.3.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Canceling $\nu ^{-1}$ out of the Broadie-Kaya discretization scheme with martingale correction}{10}{subsection.3.4}}
+\citation{HickernellandLan2013}
+\citation{HickernellTonyandDa}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Determining the Number of Samples Required to Meet a Specified Error Tolerance}{11}{section.4}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Numerical Examples}{11}{section.5}}
+\citation{Hickernell2012}
+\citation{Kienitz2012}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Tests for small $\nu $}{12}{subsection.5.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Parameters for numerical tests}}{12}{table.1}}
+\newlabel{tab:params setup for n=0}{{1}{12}{Parameters for numerical tests}{table.1}{}}
+\newlabel{tab:params setup for n=0@cref}{{[table][1][]1}{12}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Test of European call options with $\nu $ close or equal to zero}}{12}{table.2}}
+\newlabel{table:nu=0}{{2}{12}{Test of European call options with $\nu $ close or equal to zero}{table.2}{}}
+\newlabel{table:nu=0@cref}{{[table][2][]2}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Compare the modified QE scheme to the modified QE scheme with martingale correction}{12}{subsection.5.2}}
+\citation{Glasserman2003}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Parameters for numerical tests}}{13}{table.3}}
+\newlabel{tab:params setup}{{3}{13}{Parameters for numerical tests}{table.3}{}}
+\newlabel{tab:params setup@cref}{{[table][3][]3}{13}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Compare modified QE with modified QE\_m}}{13}{table.4}}
+\newlabel{table:QE with QE_m}{{4}{13}{Compare modified QE with modified QE\_m}{table.4}{}}
+\newlabel{table:QE with QE_m@cref}{{[table][4][]4}{13}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Test options with importance sampling}{13}{subsection.5.3}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Mean shifts for importance sampling}}{13}{table.5}}
+\newlabel{tab:params setup for IS}{{5}{13}{Mean shifts for importance sampling}{table.5}{}}
+\newlabel{tab:params setup for IS@cref}{{[table][5][]5}{13}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.1}Simulations with IID sampling}{13}{subsubsection.5.3.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Test of option price with IID\_MC}}{14}{table.6}}
+\newlabel{table:IID nu=0.4}{{6}{14}{Test of option price with IID\_MC}{table.6}{}}
+\newlabel{table:IID nu=0.4@cref}{{[table][6][]6}{14}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.3.2}Simulations with Sobol sequences}{14}{subsubsection.5.3.2}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Test of option price with Sobol' points}}{14}{table.7}}
+\newlabel{table:Sobol nu=0.4}{{7}{14}{Test of option price with Sobol' points}{table.7}{}}
+\newlabel{table:Sobol nu=0.4@cref}{{[table][7][]7}{14}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{14}{section.6}}
 \bibstyle{plainnat}
 \bibdata{Thebib}
 \bibcite{Andersen2006}{Andersen(2006)}
+\bibcite{ScottChesney1989}{Chesney and Scott(1989)}
+\bibcite{Dufresne2001}{Dufresne(2001)}
+\bibcite{Glasserman2003}{Glasserman(2003)}
+\bibcite{SABR2002}{Hagan et\nobreakspace  {}al.(2002)Hagan, Kumar, Lesniewski, and Woodward}
+\bibcite{Heston1993}{Heston(1993)}
+\bibcite{Hickernell2012}{Hickernell et\nobreakspace  {}al.(2012)Hickernell, Jiang, Liu, and Owen}
+\bibcite{HickernellandLan2013}{Hickernell et\nobreakspace  {}al.(2013)Hickernell, Jiang, Liu, and Owen}
+\bibcite{HullWhite1987}{Hull and White(1987)}
+\bibcite{Kienitz2012}{Kienitz and Wetterau(2012)}
 \bibcite{Klebaner2005}{Klebaner(2005)}
-\newlabel{eof}{{Appendix\ A}{12}{Acknowledgments}{section*.7}{}}
-\newlabel{eof@cref}{{[appendix][1][2147483647]Appendix\ A}{12}}
+\@writefile{toc}{\contentsline {section}{\numberline {Appendix\ A}Appendices}{15}{appendix.A}}
+\newlabel{sec:AppendixA}{{Appendix\ A}{15}{Appendices}{appendix.A}{}}
+\newlabel{sec:AppendixA@cref}{{[appendix][1][2147483647]Appendix\ A}{15}}
+\newlabel{eof}{{Appendix\ A}{15}{Acknowledgments}{section*.9}{}}
+\newlabel{eof@cref}{{[appendix][1][2147483647]Appendix\ A}{15}}

@@ -1,4 +1,4 @@
-\begin{thebibliography}{2}
+\begin{thebibliography}{11}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -9,6 +9,65 @@
 Leif B.~G. Andersen.
 \newblock Efficient simulation of the heston stochastic volatility model.
 \newblock 2006.
+
+\bibitem[Chesney and Scott(1989)]{ScottChesney1989}
+Marc Chesney and Louis Scott.
+\newblock Pricing european currency options: A comparison of the modified
+  black- scholes model and a random variance model.
+\newblock \emph{The Journal of Financial and Quantitative Analysis},
+  24\penalty0 (3):\penalty0 267--284, September 1989.
+
+\bibitem[Dufresne(2001)]{Dufresne2001}
+Daniel Dufresne.
+\newblock The integrated square-root process.
+\newblock 2001.
+
+\bibitem[Glasserman(2003)]{Glasserman2003}
+Paul Glasserman.
+\newblock \emph{Monte Carlo Methods in Financial Engineering}, chapter~4, pages
+  267--268.
+\newblock Springer, 2003.
+
+\bibitem[Hagan et~al.(2002)Hagan, Kumar, Lesniewski, and Woodward]{SABR2002}
+Patrick~S. Hagan, Deep Kumar, Andrew~S. Lesniewski, and Diana~E. Woodward.
+\newblock Managing smile risk.
+\newblock \emph{The Best of Wilmott 1: Incorporating the Quantitative Finance
+  Review}, pages 249--296, 2002.
+
+\bibitem[Heston(1993)]{Heston1993}
+Steven~L. Heston.
+\newblock A closed-form solution for options with stochastic volatility with
+  applications to bond and currency options.
+\newblock \emph{Review of financial studies}, 6\penalty0 (2):\penalty0
+  327--343, 1993.
+
+\bibitem[Hickernell et~al.(2012)Hickernell, Jiang, Liu, and
+  Owen]{Hickernell2012}
+Fred~J. Hickernell, Lan Jiang, Yuewei Liu, and Art~B. Owen.
+\newblock Guaranteed conservative fixed width confidence intervals via monte
+  carlo sampling.
+\newblock In \emph{Monte Carlo and Quasi Monte Carlo Methods}, pages 105--128,
+  2012.
+
+\bibitem[Hickernell et~al.(2013)Hickernell, Jiang, Liu, and
+  Owen]{HickernellandLan2013}
+Fred~J. Hickernell, Lan Jiang, Yuewei Liu, and Art~B. Owen.
+\newblock Guaranteed conservative fixed width confidence intervals via monte
+  carlo sampling.
+\newblock \emph{Monte Carlo and Quasi-Monte Carlo Methods 2012}, pages
+  105--128, 2013.
+
+\bibitem[Hull and White(1987)]{HullWhite1987}
+John Hull and Alan White.
+\newblock The pricing of options on assets with stochastic volatilities.
+\newblock \emph{The journal of finance}, 42\penalty0 (2):\penalty0 281--300,
+  June 1987.
+
+\bibitem[Kienitz and Wetterau(2012)]{Kienitz2012}
+J\"{o}rg Kienitz and Daniel Wetterau.
+\newblock \emph{Financial Modelling Theory, Implementation and Practice (with
+  Matlab source)}, chapter~7, page 296.
+\newblock Wiley, 2012.
 
 \bibitem[Klebaner(2005)]{Klebaner2005}
 Fima~C Klebaner.

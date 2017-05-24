@@ -2,5 +2,7 @@ This is BibTeX, Version 0.99dThe top-level auxiliary file: Heston_Stochastic_Vol
 The style file: plainnat.bst
 Database file #1: Thebib.bib
 Warning--I didn't find a database entry for "Andersen"
+Warning--I didn't find a database entry for "HickernellTonyandDa"
 Warning--empty journal in Andersen2006
-(There were 2 warnings)
+Warning--empty journal in Dufresne2001
+(There were 4 warnings)

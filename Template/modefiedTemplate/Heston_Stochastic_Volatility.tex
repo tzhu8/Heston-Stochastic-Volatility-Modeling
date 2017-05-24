@@ -820,6 +820,7 @@ In the first stage, the user specifies four quantities: an initial sample size $
 \begin{equation*}
   \hat{\mu}=\frac{1}{n_{\mu}}\sum\limits_{i=n_{\sigma}+1}^{n_{\sigma}+n_{\mu}}Y_i.
 \end{equation*}
+which has theoretical guarantee of satisfaction for the user-defined error tolerance.
 
 In addition to the IID sampling, another algorithm is implemented in the GAIL to satisfy the error critetion for Sobol sequences. Details on this algorithm can be found in \cite{HickernellTonyandDa}. The main idea is to assume our integrands lie in a cone and bound $|\mu-\mu_n|$ in terms of function data, i.e., discrete Fourier coefficients. Then one can increase the sample size n until $\text{err}_n$ is no greater than the absolute error tolerance.
 
