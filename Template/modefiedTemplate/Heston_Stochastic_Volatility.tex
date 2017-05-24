@@ -805,19 +805,21 @@ Then,
 For $K_3\hat{V}_t+K_4\hat{V}_{t+\Delta}$, it is the same as the Broadie-Kaya discretization scheme without martingale correction.\\
 
 \section{Determining the Number of Samples Required to Meet a Specified Error Tolerance}
-As we mentioned in the introduction, this modified algorithm is implemented in GAIL, which automatically determines the number of samples required to meet a specified error tolerance. For IID sampling, the detailed algorithm proofs are illustrated in the \cite{HickernellandLan2013}. We give a brief introduction of the procedure here. Their proposed two-stage algorithm assumes that the kurtosis of the random sample Y does not exceed some user-specified bound. The assumption they use is an upper bound on the modified kurtosis of the random variable Y:
+As we mentioned in the introduction, this modified algorithm is implemented in GAIL, which automatically determines the number of samples required to meet a specified error tolerance. For IID sampling, the proofs of the success of the two-stage algorithm are illustrated in the \cite{HickernellandLan2013}. We give a brief introduction of the procedure of the two-stage algorithm here. The main assumption needed is that the kurtosis of the random sample Y does not exceed some user-specified bound. The assumption they use is an upper bound on the modified kurtosis of the random variable Y:
 \begin{equation*}
-  \tilde{k}=\frac{\bE[(Y-\mu)^4]}{\sigma^4}\leq\tilde{k}_{\text{max}}.
+  \tilde{\kappa}=\frac{\bE[(Y-\mu)^4]}{\sigma^4}\leq\tilde{\kappa}_{\text{max}}.
 \end{equation*}
 Under this assumption, the first stage is that generates a conservative upper bound on the variance and the second stage is that uses the variance bound generated in the first stage and a Berry-Esseen Theorem to determine the sample size $n$.
 
-Let $Y_1,...,Y_n$ be IID sampling, the goal is to obtain a confidence interval 
+Let $Y_1,...,Y_n$ be IID sampling, the goal is to obtain a confidence interval
 \begin{equation*}
-  Pr[|\mu-\hat{\mu}\leq\epsilon]\geq1-\alpha,
+  \text{Pr}[|\mu-\hat{\mu}\leq\epsilon]\geq1-\alpha,
 \end{equation*}
 where $\mu=\bE(Y)$, $\hat{\mu}=\hat{\mu}_n=\frac{1}{n}\sum\limits_{i=1}^{n}Y_i$, $\epsilon$ is the half-width of the confidence interval and $\alpha$ is the level of uncertainty.
-In the first stage, the user specifies four quantities: an initial sample size $n_{\sigma}\in\{2,3,...\}$ for variance estimation, a variance inflation factor $\frak{C}\in(1,\infty)$, $\alpha\in(0,1)$ and $\epsilon>0$. The IID sampled $Y_1$,..., $Y_{n_\sigma}$ are independent from the same distribution as $Y$. 
-Then, the Berry-Esseen inequality is used to determine the sample size $n_\mu$ and generate sample $Y_{n_\sigma+1}$, ..., $Y_{n_\sigma+n_\mu}$, which is independent of $Y$ as well as $Y_1$,..., $Y_{n_\sigma}$ in the second stage based on the user-defined error tolerance.
+In the first stage, the user specifies four quantities: an initial sample size $n_{\sigma}\in\{2,3,...\}$ for variance estimation, a variance inflation factor $\frak{C}\in(1,\infty)$, $\alpha\in(0,1)$ and $\epsilon>0$. The IID sampled $Y_1$,..., $Y_{n_\sigma}$ are independent from the same distribution as $Y$. Then the conservative variance estimate $\hat{\sigma}^2 = \frak{C}^2s_{n_{\sigma}}^2$ is computed in terms of the sample variance $s_{n_{\sigma}}^2$, where $\frak{C}^2>1$ is a ``variance inflation factor" that will reduce the probability of underestimating $\sigma^2=\text{Var}(Y)$. The modified kurtosis of Y is assumed to be less than or equal to $\tilde{\kappa}_{\text{max}}(\alpha,n_{\sigma},\frak{C})$. Now we can get the sample size $n_{\mu}$ for stage two by Chebychev's inequality and Berry-Esseen inequality with parameters $\epsilon, \hat{\sigma}, \tilde{\kappa}_{\text{max}}$ and $\tilde{\alpha}=1-\sqrt{1-\alpha}$. After the sample size $n_{\mu}$ obtained, the second stage is to sample $Y_{n_\sigma+1}$, ..., $Y_{n_\sigma+n_\mu}$, which is independent of $Y$ as well as $Y_1$,..., $Y_{n_\sigma}$. Hence, the algorithm returns the sample mean
+\begin{equation*}
+  \hat{\mu}=\frac{1}{n_{\mu}}\sum\limits_{i=n_{\sigma}+1}^{n_{\sigma}+n_{\mu}}Y_i.
+\end{equation*}
 
 In addition to the IID sampling, another algorithm is implemented in the GAIL to satisfy the error critetion for Sobol sequences. Details on this algorithm can be found in \cite{HickernellTonyandDa}. The main idea is to assume our integrands lie in a cone and bound $|\mu-\mu_n|$ in terms of function data, i.e., discrete Fourier coefficients. Then one can increase the sample size n until $\text{err}_n$ is no greater than the absolute error tolerance.
 
