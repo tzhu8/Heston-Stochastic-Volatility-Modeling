@@ -824,6 +824,14 @@ which has theoretical guarantee of satisfaction for the user-defined error toler
 
 In addition to the IID sampling, another algorithm is implemented in the GAIL to satisfy the error criterion for Sobol sequences. Details on this algorithm can be found in \cite{HickernellTonyandDa}. The main idea is to assume our integrands lie in a cone and bound $|\mu-\mu_n|$ in terms of function data, i.e., discrete Fourier coefficients. Then one can increase the sample size n until $\text{err}_n$ is no greater than the absolute error tolerance.
 
+Based on the above algorithm, a new algorithm is developed by Dr. Hickernell and Dr. Rugama \cite{HickernellandTony} to meet the desired tolerance on digital sequence cubature. Given $\ell _* \in N$, $r \in N$, $m=\ell _*+r$, some non-negative valued functions $\hat{\omega}$ and $\mathring{\omega}$ can be defined with $\lim_{m\rightarrow \infty}\mathring{\omega }(m)=0$ such that $\hat{\omega}(r)\mathring{\omega}(r)<1$. The first step of the algorithm is to compute the sum of the discrete Walsh coefficients, $\tilde{S}_{m-r,m}$. Then the inequality 
+
+\begin{equation*}
+\frak{C}(m)\tilde{S}_{m-r,m}(f)\leq \epsilon
+\end{equation*}
+
+is checked, where $\frak{C}(m)=\hat{\omega}(m)\mathring{\omega}(r)/[1-\hat{\omega}(r)\mathring{\omega}(r)]$. If so, return the cubature $\hat{I}_m(f)$, Otherwise, increment m by one and go back to step one.
+%=\frac{1}{b^m} \sum _{i=0}^{b^m-1} f(z_i \oplus \Delta), where . 
 
 \section{Numerical Examples}
 
